@@ -26,6 +26,8 @@ class Term extends Canv {
                     if(link) {
                         this.link = link;
                     }
+
+                    this.img = false;
                 }
             },
             setup() {
@@ -446,6 +448,18 @@ class Term extends Canv {
                 };
             },
 
+            img(src) {
+                const l = new cmd.line("");
+                l.img = new Pic(src, 0, 0, 100, 100);
+                this.newLine(l);
+                for(let i = 0; i < (l.img.height/this.lineHeight)-2; i++) {
+                    let br = new cmd.line("");
+                    br.background = false;
+                    this.newLine(br);
+                }
+                return undefined;
+            },
+
             draw() {
                 if (this.loaded) {
                     this.background = this.colors.secondary;
@@ -486,6 +500,11 @@ class Term extends Canv {
                         }
 
                         this.add(text);
+
+                        if(line.img) {
+                            line.img.setPos(text.x, text.y);
+                            this.add(line.img);
+                        }
 
                         if (i === this.lines.length - 1) {
                             lastLineWidth = text.width;

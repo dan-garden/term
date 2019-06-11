@@ -1,4 +1,4 @@
-new Canv('canvas', {
+window.fs = new Canv('canvas', {
     setup() {
         this.structure = localStorage["cli-structure"] ?
         JSON.parse(localStorage.getItem("cli-structure")) : [];
@@ -18,9 +18,14 @@ new Canv('canvas', {
                 for(let i = 0; i < content.length; i++) {
                     const struct = content[i];
                     if(struct.type === "dir") {
-                        cmd.newLine(struct.name, cmd.colors.blue);
+                        cmd.newLine(struct.name, cmd.colors.blue, () => {
+                            cmd.run("clear");
+                            cmd.run("cd "+struct.name);
+                        });
                     } else {
-                        cmd.newLine(struct.name, cmd.colors.green);
+                        cmd.newLine(struct.name, cmd.colors.green, () => {
+                            cmd.run("editor "+struct.name);
+                        });
                     }
                 }
             } else {
@@ -182,7 +187,7 @@ new Canv('canvas', {
         }
     },
 
-    open(filename) {
+    open(filename, type="file") {
         if(filename) {
             const paths = filename.split("/");
             const curPath = this.path;
@@ -191,7 +196,7 @@ new Canv('canvas', {
                     const change = this.changeDirectory(paths[i]);
                     if(!change) {
                         this.path = curPath;
-                        throw new Error('File not found');
+                        throw new Error(type=='file'?'File not found':'Directory not found')
                     }
                 }
             }
@@ -205,9 +210,9 @@ new Canv('canvas', {
             
             
             if(search && search[0]) {
-                return search[0].type === "file" ? search[0] : undefined;
+                return search[0].type === type ? search[0] : undefined;
             } else {
-                throw new Error('File not found')
+                throw new Error(type=='file'?'File not found':'Directory not found')
             }
 
         }
