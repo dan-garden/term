@@ -57,6 +57,8 @@ class Term extends Canv {
                 this.bindKeyDown();
 
                 this.loadPlugins();
+
+                window.console = this;
             },
 
             visible() {
