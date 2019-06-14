@@ -1,6 +1,6 @@
 new Canv('canvas', {
     setup() {
-        cmd.registerCommand("r", args => {
+        cmd.registerCommand("reddit", args => {
             const sub = args.shift();
             if(sub) {
                 fetch(`https://www.reddit.com/r/${sub}.json`)

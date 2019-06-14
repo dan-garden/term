@@ -13,7 +13,7 @@ new Canv('canvas', {
                 );
                 numbersBG.color = new Color(
                     cmd.colors.secondary
-                ).shade(30);
+                );
                 lineNumbers.add(numbersBG);
 
                 for (let i = 0; i < cmd.lines.length; i++) {
@@ -24,7 +24,7 @@ new Canv('canvas', {
                         cmd.fontSize
                     );
 
-                    lineNumber.color = new Color(cmd.colors.primary).shade(255);
+                    lineNumber.color = new Color(cmd.colors.primary);
                     lineNumber.textAlign = "right";
                     lineNumber.fontFamily = cmd.fontFamily;
 

@@ -13,6 +13,7 @@ new Canv('canvas', {
                     return line;
                 })
             }
+            
         });
     }
 })

@@ -14,7 +14,7 @@ new Canv('canvas', {
                 if(remote[0].clientId!=this.clientId) {
                     const r = remote.shift();
                     cmd.lines[cmd.lines.length-1].text = cmd.prefix + r.command;
-                    cmd.run(r.command);
+                    setTimeout(() => cmd.run(r.command), 0);
                     localStorage.setItem("cli-remote", JSON.stringify(remote))
                 }
             }

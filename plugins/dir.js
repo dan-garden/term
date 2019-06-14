@@ -43,7 +43,7 @@ window.fs = new Canv('canvas', {
             }
         });
 
-        cmd.registerCommand("open", args => {
+        cmd.registerCommand("view", args => {
             const filename = args.join(" ");
             try {
                 new URL(filename);

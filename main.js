@@ -2,8 +2,8 @@ class Term extends Canv {
     constructor() {
         super('canvas', {
             colors: {
-                primary: new Color(255, 255, 0),
                 secondary: new Color(18, 0, 36),
+                primary: new Color(255, 255, 255),
 
                 grey: new Color(150),
 
@@ -58,7 +58,7 @@ class Term extends Canv {
 
                 this.loadPlugins();
 
-                window.console = this;
+                // window.console = this;
             },
 
             visible() {
