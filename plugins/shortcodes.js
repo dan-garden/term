@@ -9,6 +9,24 @@ new Canv('canvas', {
                 const str = line.text.toLowerCase().replace(cmd.prefix, "");
                 return str.includes(filter);
             });
+        });
+
+        cmd.registerCommand("reg", args => {
+            const type = args.shift();
+            if(!type || (type!=="function" && type!=="fn" && type!=="command" && type!=="cmd")) {
+                throw new Error("Type must be function or command");
+            } else {
+                if(type === "function" || type === "fn") {
+                    cmd.registerFunction(new Function(args.join(" ")));
+                } else if(type === "command" || type === "cmd") {
+                    const identifier = args.shift();
+                    if(identifier) {
+                        cmd.registerCommand(identifier, new Function(args.join(" ")));
+                    } else {
+                        throw new Error("Command must have an identifier");
+                    }
+                }
+            }
         })
 
         cmd.registerCommand("clear", args => {
@@ -57,6 +75,24 @@ new Canv('canvas', {
 
         cmd.registerCommand("log", args => {
             cmd.log(eval(args.join(" ")));
+        });
+
+        cmd.registerCommand("interval", args => {
+            const timing = args.shift();
+            if(!timing) {
+                throw new Error("Please include the timing");
+            } else {
+                setInterval(() => cmd.run(args.join(" "), false) || cmd.newLine(), timing);
+            }
+        });
+
+        cmd.registerCommand("timeout", args => {
+            const timing = args.shift();
+            if(!timing) {
+                throw new Error("Please include the timing");
+            } else {
+                setTimeout(() => cmd.run(args.join(" "), false) || cmd.newLine(), timing);
+            }
         });
 
         cmd.registerCommand("for", args => {

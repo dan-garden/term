@@ -114,7 +114,7 @@ window.fs = new Canv('canvas', {
 
             if(found) {
                 const split = filename.split(".");
-                const ext = split[split.length-1];
+                const ext = split[split.length-1].toLowerCase();
                 if(ext === "js") {
                     eval.apply(cmd, [found.content]);
                 } else if(ext === "dan") {
@@ -122,6 +122,8 @@ window.fs = new Canv('canvas', {
                     .filter(l=>l.trim()!=="")
                     .join(" && ");
                     cmd.run(command, false);
+                } else if(ext === "php") {
+                    eval.apply(cmd, [found.content]);
                 }
             }
         })

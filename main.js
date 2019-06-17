@@ -26,7 +26,7 @@ class Term extends Canv {
                     if(link) {
                         this.link = link;
                     }
-
+                    this.ghost = false;
                     this.img = false;
                 }
             },
@@ -161,6 +161,11 @@ class Term extends Canv {
                                     this.cursorPos++;
                                 }
                             }
+
+                            // let ghost = "";
+                            // this.history.forEach(() => {
+                            //     if(this.history)
+                            // })
                         }
                     }
                 });
@@ -195,6 +200,7 @@ class Term extends Canv {
                 this.curHistoryIndex = this.history.length;
                 this.cursorPos = false;
                 this.triggerEvent("newline");
+                this.clearGhosts();
                 return line;
             },
 
@@ -259,6 +265,18 @@ class Term extends Canv {
 
             getLastLine() {
                 return this.lines[this.lines.length - 2];
+            },
+
+            clearGhosts() {
+                this.lines.map(line => {
+                    line.ghost = false;
+                    return line;
+                });
+            },
+
+            setGhostText(text) {
+                this.clearGhosts();
+                this.lines[this.lines.length-1].ghost = this.prefix + text;
             },
 
             execute() {
@@ -468,10 +486,18 @@ class Term extends Canv {
 
                     let lastLineWidth = 0;
                     this.lines.forEach((line, i) => {
+                        let ghost = false;
                         const text = new Text(line.text, this.textIndent, i * this.lineHeight);
                         text.color = line.color || this.colors.primary;
                         text.fontFamily = this.fontFamily;
                         text.fontSize = this.fontSize;
+
+                        if(line.ghost) {
+                            ghost = new Text(line.ghost, text.x, text.y);
+                            ghost.color = this.colors.grey;
+                            ghost.fontFamily = this.fontFamily;
+                            ghost.fontSize = this.fontSize;
+                        }
 
                         if (line.background) {
                             const bg = new Rect(text.x, text.y + (this.lineHeight / 4), this.width, this.lineHeight);
@@ -501,6 +527,9 @@ class Term extends Canv {
                             this.add(bg);
                         }
 
+                        if(ghost) {
+                            this.add(ghost);
+                        }
                         this.add(text);
 
                         if(line.img) {

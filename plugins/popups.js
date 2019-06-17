@@ -19,7 +19,7 @@ new Canv('canvas', {
                 display: none;
                 text-align: center;
                 color: ${cmd.colors.primary};
-                background-color: ${cmd.colors.secondary.opacity(0.8)};
+                background-color: ${new Color(cmd.colors.secondary).opacity(0.8)};
                 font-family: ${cmd.fontFamily};
             }
 
