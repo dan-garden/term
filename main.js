@@ -44,7 +44,7 @@ class Term extends Canv {
 
                 this.view = new ShapeGroup;
 
-                this.maxHistory = 100;
+                this.maxHistory = 1000;
                 this.lineHeight = 14;
                 this.fontFamily = "monospace";
                 this.fontSize = 14;
@@ -143,6 +143,11 @@ class Term extends Canv {
                                     }
                                 }
                             }
+                        } else if(e.key === "Tab") {
+                            e.preventDefault();
+                            if(this.lines[this.lines.length-1].ghost) {
+                                this.lines[this.lines.length-1].text = this.lines[this.lines.length-1].ghost;
+                            }
                         } else if (e.key.length === 1) {
                             let maxWidth = (this.width / this.charWidth) - 1;
                             if (this.lines[lastLineIndex].text.length >= maxWidth) {
@@ -161,12 +166,23 @@ class Term extends Canv {
                                     this.cursorPos++;
                                 }
                             }
-
-                            // let ghost = "";
-                            // this.history.forEach(() => {
-                            //     if(this.history)
-                            // })
                         }
+
+                        const commandSearch = Object.keys(this.commands)
+                        .sort((a,b) => b.length-a.length);
+                        const historySearch = this.history;
+                        const search = historySearch.concat(commandSearch);
+                        const historyMatches = search.filter(historyItem => {
+                            let checkLastLine = this.lines[this.lines.length-1].text.replace(this.prefix, "");
+                            // return checkLastLine.trim()!=""?historyItem.startsWith(checkLastLine):false;
+                            return checkLastLine.trim()!=""&&checkLastLine!=historyItem?historyItem.startsWith(checkLastLine):false;
+                        });
+
+                        historyMatches.sort((a, b) => {
+                            return b.length-a.length;
+                        })
+
+                        this.lines[this.lines.length-1].ghost=historyMatches.length?(this.prefix + historyMatches[historyMatches.length-1]):false;
                     }
                 });
             },
