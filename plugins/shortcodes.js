@@ -11,6 +11,13 @@ new Canv('canvas', {
             });
         });
 
+        cmd.registerSuggestions([
+            "reg fn",
+            "reg function",
+            "reg cmd",
+            "reg command"
+        ]);
+
         cmd.registerCommand("reg", args => {
             const type = args.shift();
             if(!type || (type!=="function" && type!=="fn" && type!=="command" && type!=="cmd")) {
@@ -114,14 +121,7 @@ new Canv('canvas', {
 
         cmd.registerCommand("goto", args => {
             window.open("https://" + args.join(" "));
-        })
-
-
-        // cmd.registerEvent("newline", args => {
-        //     if(cmd.lines.length === Math.floor(cmd.height / cmd.lineHeight)) {
-        //         cmd.run("clear");
-        //     }
-        // })
+        });
 
     }
 })

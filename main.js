@@ -35,6 +35,7 @@ class Term extends Canv {
                 this.lines = [];
                 this.functions = [];
                 this.overlays = [];
+                this.suggestions = [];
                 this.commands = {};
                 this.events = {};
                 this.history = localStorage["cli-history"] ?
@@ -168,21 +169,7 @@ class Term extends Canv {
                             }
                         }
 
-                        const commandSearch = Object.keys(this.commands)
-                        .sort((a,b) => b.length-a.length);
-                        const historySearch = this.history;
-                        const search = historySearch.concat(commandSearch);
-                        const historyMatches = search.filter(historyItem => {
-                            let checkLastLine = this.lines[this.lines.length-1].text.replace(this.prefix, "");
-                            // return checkLastLine.trim()!=""?historyItem.startsWith(checkLastLine):false;
-                            return checkLastLine.trim()!=""&&checkLastLine!=historyItem?historyItem.startsWith(checkLastLine):false;
-                        });
-
-                        historyMatches.sort((a, b) => {
-                            return b.length-a.length;
-                        })
-
-                        this.lines[this.lines.length-1].ghost=historyMatches.length?(this.prefix + historyMatches[historyMatches.length-1]):false;
+                        this.setGhostText(this.getGhostText());
                     }
                 });
             },
@@ -290,9 +277,39 @@ class Term extends Canv {
                 });
             },
 
-            setGhostText(text) {
-                this.clearGhosts();
-                this.lines[this.lines.length-1].ghost = this.prefix + text;
+            getGhostSuggestions() {
+                const searchOptions = [
+                    ...Object.keys(this.commands),
+                    ...this.history,
+                    ...this.suggestions
+                ];
+
+                const search = Array.from(new Set(searchOptions.filter(historyItem => {
+                    let checkLastLine = this.lines[this.lines.length-1].text.replace(this.prefix, "");
+                    // return checkLastLine.trim()!=""?historyItem.startsWith(checkLastLine):false;
+                    return checkLastLine.trim()!=""&&checkLastLine!=historyItem?historyItem.startsWith(checkLastLine):false;
+                })));
+
+                search.sort((a, b) => {
+                    return b.length-a.length;
+                });
+
+                this.autocomplete = search;
+                
+                return search;
+            },
+
+            getGhostText() {
+                const suggestions = this.getGhostSuggestions();
+                return suggestions.length ? suggestions[suggestions.length-1] : false;
+            },
+
+            setGhostText(ghost) {
+                if(ghost) {
+                    this.lines[this.lines.length-1].ghost = this.prefix + ghost;
+                } else {
+                    this.lines[this.lines.length-1].ghost = false;
+                }
             },
 
             execute() {
@@ -482,6 +499,14 @@ class Term extends Canv {
                         this.log(res);
                     }
                 };
+            },
+
+            registerSuggestion(suggestion) {
+                this.suggestions.push(suggestion);
+            },
+
+            registerSuggestions(suggestions) {
+                this.suggestions.push(...suggestions);
             },
 
             img(src) {
