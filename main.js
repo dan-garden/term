@@ -376,13 +376,17 @@ class Term extends Canv {
             },
 
             filterParams(params) {
-                return params.filter(p => p != "")
+                params = params.filter(p => p != "")
                     .join(' ')
                     .replace(/\{{.+?\}}/g, (match, offset, string) => {
                         return eval(match);
-                    }).split(' ').map(param => {
+                    }).split(' ')
+                    .filter(p => p != "")
+                    .map(param => {
                         return isNaN(param) ? param : parseInt(param)
                     });
+
+                    return params;
             },
 
             getParams() {

@@ -54,6 +54,10 @@ new Canv('canvas', {
             document.location.reload();
         })
 
+        cmd.registerCommand("h-remove", args => {
+            cmd.history.splice(cmd.history.indexOf(args.join(" "), 1));
+        })
+
 
         cmd.registerCommand("load", args => {
             const type = args.shift();

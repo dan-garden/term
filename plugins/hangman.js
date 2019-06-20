@@ -5,6 +5,7 @@ new Canv('canvas', {
 
     setup() {
         cmd.registerCommand("hang", args => {
+            // console.log(args);
             if(args.length >= 1) {
                 const arg = args[0];
                 if(arg === "new") {
@@ -23,6 +24,9 @@ new Canv('canvas', {
         });
 
 
+        cmd.registerSuggestions("abcdefghijklmonpqrstuvwxyz".split("").map(c=>"hang "+c));
+
+
         this.reset();
     },
 
@@ -34,6 +38,7 @@ new Canv('canvas', {
     },
 
     guessChar(character) {
+        character = character.toLowerCase();
         for(let i = 0; i < this.word.length; i++) {
             let wordchar = this.word[i];
 
