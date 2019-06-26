@@ -1,7 +1,6 @@
 {
-    "dir": {},
+    "fs/index": {},
     "shortcodes": {},
-    "print": {},
     "line-numbers": {},
     "clock": {},
     "hangman": {},
@@ -11,9 +10,10 @@
     "localstorage": {},
     "popups": {},
     "google": {},
-    "reddit": {},
     "color-picker": {},
     "php": {},
     "remote": {},
+    "reddit": {},
+    "notes": {},
     "skew": {}
 }

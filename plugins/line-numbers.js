@@ -18,7 +18,7 @@ new Canv('canvas', {
 
                 for (let i = 0; i < cmd.lines.length; i++) {
                     const lineNumber = new Text(
-                        i + 1,
+                        i,
                         numbersBG.width-5,
                         (i * cmd.lineHeight),
                         cmd.fontSize

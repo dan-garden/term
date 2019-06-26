@@ -8,6 +8,7 @@ new Canv('canvas', {
                 for(let i = 0; i < this.displays.length; i++) {
                     this.displays[i].pop();
                     this.displays[i].unshift(
+                        this.shows[i] + ': ' + 
                         eval(`(function() { return ${this.shows[i]} }.bind(cmd))()`)
                     );
                 }
@@ -16,9 +17,7 @@ new Canv('canvas', {
 
         cmd.registerCommand("monitor", args => {
             this.shows.push(args.join(" "));
-            // console.log(this.shows);
             this.displays.push([]);
-            // console.log(this.displays.length, this.shows.length);
 
 
             return this.displays[this.displays.length-1];

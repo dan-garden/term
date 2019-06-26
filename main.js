@@ -266,8 +266,18 @@ class Term extends Canv {
                 );
             },
 
-            getLastLine() {
-                return this.lines[this.lines.length - 2];
+            getLine(n) {
+                if(n==="last") {
+                    n = this.lines.length-1;
+                }
+                return this.lines[n];
+            },
+
+            removeLine(n) {
+                if(n==="last") {
+                    n = this.lines.length-1;
+                }
+                this.lines.splice(n, 1);
             },
 
             clearGhosts() {
@@ -313,7 +323,7 @@ class Term extends Canv {
             },
 
             execute() {
-                const lastLine = this.getLastLine();
+                const lastLine = this.getLine("last");
                 if (typeof lastLine.text === "function") {
                     lastLine.text();
                 }
@@ -321,6 +331,7 @@ class Term extends Canv {
             },
 
             run(command, nl = true) {
+                command = command.toString();
                 if (nl) {
                     this.updateHistory(command);
                 }
@@ -471,6 +482,7 @@ class Term extends Canv {
                                 loadedCount++;
 
                                 if (loadedCount === keys.length) {
+                                    this.triggerEvent("plugins-loaded");
                                     this.finishedLoading();
                                 }
                             });

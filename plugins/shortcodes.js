@@ -55,9 +55,14 @@ new Canv('canvas', {
         })
 
         cmd.registerCommand("h-remove", args => {
-            cmd.history.splice(cmd.history.indexOf(args.join(" "), 1));
+            cmd.history.splice(cmd.history.indexOf(args.join(" ")), 1);
+            cmd.history.pop();
         })
 
+        cmd.registerSuggestions([
+            "load sketch",
+            "load plugin"
+        ]);
 
         cmd.registerCommand("load", args => {
             const type = args.shift();
@@ -113,15 +118,25 @@ new Canv('canvas', {
                 const start = args.shift();
                 const end = args.shift();
                 const inc = args.shift();
-                const fn = args.join(" ");
+                let fn = args.join(" ");
 
                 eval(`for(let i = ${start}; i ${end}; i${inc}) {
-                    window.i = i;
-                    cmd.run("${fn}", false);
+                    let second_fn = fn.split('@i').join(i);
+                    cmd.run(second_fn, false);
                 }`);
-                delete window.i;
             }
-        })
+        });
+
+        cmd.registerCommand("if", args => {
+            const condition = args.shift();
+            if(condition) {
+                eval(`
+                    if(${condition}) {
+                        cmd.run("${args.join(' ')}", false)
+                    }
+                `);
+            }
+        });
 
         cmd.registerCommand("goto", args => {
             window.open("https://" + args.join(" "));

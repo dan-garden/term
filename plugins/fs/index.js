@@ -1,13 +1,18 @@
 window.fs = new Canv('canvas', {
     setup() {
-        this.structure = localStorage["cli-structure"] ?
-        JSON.parse(localStorage.getItem("cli-structure")) : [];
+        this.structure = [];
 
+        this.opts = Object.freeze({
+            root: "./public/",
+            writeDisk: false,
+            readDisk: false
+        });
 
-
-
+        
         this.path = "/";
         this.updatePrefix();
+        this.getStructure();
+
 
 
         cmd.registerCommand("ls", args => {
@@ -87,6 +92,15 @@ window.fs = new Canv('canvas', {
             }
         });
 
+        cmd.registerCommand("open", args => {
+            const filename = args.join(" ");
+            const found = this.open(filename);
+            if(found) {
+                const path = "plugins/fs/" + this.opts.root + this.getPath().join("/");
+                window.open(path + "/" + filename);
+            }
+        });
+
         cmd.registerCommand("editor", args => {  
             const filename = args.shift();
             let found = this.open(filename);
@@ -110,6 +124,28 @@ window.fs = new Canv('canvas', {
 
         cmd.registerCommand("exec", args => {
             const filename = args.shift();
+            this.exec(filename);
+        })
+
+
+        cmd.registerEvent("plugins-loaded", ()=> {
+            return this.exec("startup.dan");
+        })
+    },
+
+    keyHandler(e) {
+        var TABKEY = 9;
+        if(e.keyCode == TABKEY) {
+            this.value += "\t";
+            if(e.preventDefault) {
+                e.preventDefault();
+            }
+            return false;
+        }
+    },
+
+    exec(filename) {
+        try {
             const found = this.open(filename);
 
             if(found) {
@@ -126,17 +162,8 @@ window.fs = new Canv('canvas', {
                     eval.apply(cmd, [found.content]);
                 }
             }
-        })
-    },
-
-    keyHandler(e) {
-        var TABKEY = 9;
-        if(e.keyCode == TABKEY) {
-            this.value += "\t";
-            if(e.preventDefault) {
-                e.preventDefault();
-            }
-            return false;
+        } catch(e) {
+            
         }
     },
 
@@ -220,8 +247,42 @@ window.fs = new Canv('canvas', {
         }
     },
 
+    getStructure() {
+        if(this.opts.readDisk) {
+            fetch("plugins/fs/get.php?root="+this.opts.root)
+            .then(result => result.json())
+            .then(result => {
+                this.structure = result;
+            })
+        } else {
+            if(!this.opts.writeDisk) {
+                this.structure = localStorage["cli-fs"] ?
+                JSON.parse(localStorage.getItem("cli-fs")) : [];
+            }
+        }
+    },
+
     updateStructure() {
-        localStorage.setItem("cli-structure", JSON.stringify(this.structure));
+        const stringify = JSON.stringify(this.structure);
+        if(this.opts.writeDisk) {
+            const body = new FormData;
+        
+            body.append("fs", stringify);
+            body.append("root", this.opts.root);
+            
+            fetch("plugins/fs/update.php", {
+                method: "POST",
+                body
+            })
+            .then(result => result.json())
+            .then(result => {
+                // console.log(result);
+            })
+        } else {
+            if(!this.opts.readDisk) {
+                localStorage.setItem("cli-fs", stringify);
+            }
+        }
     },
 
     getPath(path) {
