@@ -48,16 +48,16 @@ new Canv('canvas', {
 
         cmd.registerCommand("echo", args => {
             return args.join(" ");
-        })
+        });
 
         cmd.registerCommand("reload", args => {
             document.location.reload();
-        })
+        });
 
         cmd.registerCommand("h-remove", args => {
             cmd.history.splice(cmd.history.indexOf(args.join(" ")), 1);
             cmd.history.pop();
-        })
+        });
 
         cmd.registerSuggestions([
             "load sketch",

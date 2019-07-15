@@ -36,6 +36,7 @@ class Term extends Canv {
                 this.functions = [];
                 this.overlays = [];
                 this.suggestions = [];
+                this.autocomplete = [];
                 this.commands = {};
                 this.events = {};
                 this.history = localStorage["cli-history"] ?
@@ -45,7 +46,7 @@ class Term extends Canv {
 
                 this.view = new ShapeGroup;
 
-                this.maxHistory = 1000;
+                this.maxHistory = 10000;
                 this.lineHeight = 14;
                 this.fontFamily = "monospace";
                 this.fontSize = 14;
@@ -59,6 +60,8 @@ class Term extends Canv {
 
                 this.loadPlugins();
 
+
+                // this.registerSuggestions(Object.keys(this).map(c => "cmd." + c));
                 // window.console = this;
             },
 
@@ -400,8 +403,19 @@ class Term extends Canv {
                     return params;
             },
 
+            getParamTack(args, tack, def) {
+                let search = args.indexOf(tack);
+                if(search > -1 && args[search+1]) {
+                    search = args[search+1]
+                } else {
+                    search = def;
+                }
+
+                return search;
+            },
+
             getParams() {
-                let line = this.lines[this.lines.length - 1].text;
+                let line = this.getLine("last").text;
                 let params = line.replace(this.prefix, "");
                 params = params.split(" ");
                 params.shift();

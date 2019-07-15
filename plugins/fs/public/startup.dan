@@ -1,0 +1,2 @@
+monitor cmd.history.length
+monitor cmd.autocomplete.length

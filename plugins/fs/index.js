@@ -96,8 +96,8 @@ window.fs = new Canv('canvas', {
             const filename = args.join(" ");
             const found = this.open(filename);
             if(found) {
-                const path = "plugins/fs/" + this.opts.root + this.getPath().join("/");
-                window.open(path + "/" + filename);
+                const realpath = this.getRealPath();
+                window.open(realpath + "/" + filename);
             }
         });
 
@@ -125,7 +125,17 @@ window.fs = new Canv('canvas', {
         cmd.registerCommand("exec", args => {
             const filename = args.shift();
             this.exec(filename);
-        })
+        });
+
+        cmd.registerCommand("php", args => {
+            const filename = args.shift();
+            this.exec(filename, "php");
+        });
+
+        cmd.registerCommand("js", args => {
+            const filename = args.shift();
+            this.exec(filename, "js");
+        });
 
 
         cmd.registerEvent("plugins-loaded", ()=> {
@@ -144,22 +154,38 @@ window.fs = new Canv('canvas', {
         }
     },
 
-    exec(filename) {
+    getRealPath() {
+        return  "plugins/fs/" + this.opts.root + this.getPath().join("/");
+    },
+
+    exec(filename, allow="all") {
         try {
             const found = this.open(filename);
 
             if(found) {
                 const split = filename.split(".");
                 const ext = split[split.length-1].toLowerCase();
-                if(ext === "js") {
-                    eval.apply(cmd, [found.content]);
-                } else if(ext === "dan") {
-                    const command = found.content.split("\n")
-                    .filter(l=>l.trim()!=="")
-                    .join(" && ");
-                    cmd.run(command, false);
-                } else if(ext === "php") {
-                    eval.apply(cmd, [found.content]);
+                if(allow === "all" || ext === allow) {
+                    if(ext === "js") {
+                        eval.apply(cmd, [found.content]);
+                    } else if(ext === "dan") {
+                        const command = found.content.split("\n")
+                        .filter(l=>l.trim()!=="")
+                        .join(" && ");
+                        cmd.run(command, false);
+                    } else if(ext === "php") {
+                        const realpath = this.getRealPath();
+                        fetch(realpath + "/" + filename)
+                            .then(result => result.text())
+                            .then(result => {
+                                const lines = result.split("\n");
+                                cmd.removeLine("last");
+                                lines.forEach(line => {
+                                    cmd.newLine(line);
+                                });
+                                cmd.newLine();
+                            })
+                    }
                 }
             }
         } catch(e) {
