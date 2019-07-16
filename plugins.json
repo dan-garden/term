@@ -1,5 +1,5 @@
 {
-    "fs/index": {},
+    "detect/index": {},
     "shortcodes": {},
     "line-numbers": {},
     "clock": {},
@@ -15,5 +15,6 @@
     "remote": {},
     "reddit": {},
     "notes": {},
-    "skew": {}
+    "skew": {},
+    "fs/index": {}
 }

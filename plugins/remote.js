@@ -8,16 +8,18 @@ new Canv('canvas', {
             localStorage.setItem("cli-remote", JSON.stringify(remote))
         });
 
-        cmd.registerFunction(() => {
-            let remote = localStorage.getItem("cli-remote") ? JSON.parse(localStorage.getItem("cli-remote")) : [];
-            if(remote.length > 0) {
-                if(remote[0].clientId!=this.clientId) {
-                    const r = remote.shift();
-                    cmd.lines[cmd.lines.length-1].text = cmd.prefix + r.command;
-                    setTimeout(() => cmd.run(r.command), 0);
-                    localStorage.setItem("cli-remote", JSON.stringify(remote))
+        cmd.registerEvent("plugins-loaded", () => {
+            cmd.registerFunction(() => {
+                let remote = localStorage.getItem("cli-remote") ? JSON.parse(localStorage.getItem("cli-remote")) : [];
+                if(remote.length > 0) {
+                    if(remote[0].clientId!=this.clientId) {
+                        const r = remote.shift();
+                        cmd.lines[cmd.lines.length-1].text = cmd.prefix + r.command;
+                        setTimeout(() => cmd.run(r.command), 0);
+                        localStorage.setItem("cli-remote", JSON.stringify(remote))
+                    }
                 }
-            }
-        });
+            });
+        })
     }
 })
