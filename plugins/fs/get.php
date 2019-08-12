@@ -40,6 +40,9 @@ function getStructure() {
 
 
 
-
-echo json_encode(getStructure(), JSON_PRETTY_PRINT);
+try {
+    echo json_encode(getStructure(), JSON_PRETTY_PRINT);
+} catch(Exception $e) {
+    echo json_encode(["error" => $e->getMessage()]);
+}
 ?>

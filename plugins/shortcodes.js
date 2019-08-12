@@ -47,7 +47,7 @@ new Canv('canvas', {
         });
 
         cmd.registerCommand("echo", args => {
-            return args.join(" ");
+            cmd.newLine(args.join(" "))
         });
 
         cmd.registerCommand("reload", args => {
@@ -55,7 +55,9 @@ new Canv('canvas', {
         });
 
         cmd.registerCommand("h-remove", args => {
-            cmd.history.splice(cmd.history.indexOf(args.join(" ")), 1);
+            cmd.history = cmd.history.filter(h => h!==args.join(" "));
+            console.log(cmd.history);
+            // cmd.history.splice(cmd.history.indexOf(args.join(" ")), 1);
             cmd.history.pop();
         });
 
@@ -98,7 +100,7 @@ new Canv('canvas', {
             if(!timing) {
                 throw new Error("Please include the timing");
             } else {
-                setInterval(() => cmd.run(args.join(" "), false) || cmd.newLine(), timing);
+                setInterval(() => cmd.run(args.join(" "), false), timing);
             }
         });
 

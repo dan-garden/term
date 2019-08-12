@@ -6,6 +6,7 @@
     "hangman": {},
     "monitor": {},
     "get": {},
+    "url-exec": {},
     "shape-maker": {},
     "localstorage": {},
     "popups": {},
@@ -14,7 +15,9 @@
     "php": {},
     "remote": {},
     "reddit": {},
+    "line-game": {},
     "notes": {},
     "skew": {},
+    "readable": {},
     "fs/index": {}
 }

@@ -1,0 +1,1 @@
+fs.open("scripts","dir").content.forEach(s=>fs.exec("scripts/"+s.name));

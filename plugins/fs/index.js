@@ -4,16 +4,24 @@ window.fs = new Canv('canvas', {
 
         this.opts = Object.freeze({
             root: "./public/",
-            writeDisk: false,
-            readDisk: false
+            writeDisk: true,
+            readDisk: true
         });
 
         
         this.path = "/";
+        this.loadedFirst = false;
+        this.writeOutput = false;
         this.updatePrefix();
+        
+
+        cmd.registerEvent("files-loaded", () => {
+            if(!this.loadedFirst) {
+                this.exec("startup.dan");
+                this.loadedFirst = true;
+            }
+        })
         this.getStructure();
-
-
 
         cmd.registerCommand("ls", args => {
             this.updatePrefix();
@@ -83,12 +91,41 @@ window.fs = new Canv('canvas', {
             }
         });
 
+        cmd.registerCommand("shell_exec", args => {
+            fetch("plugins/fs/shell_exec.php?cmd="+encodeURIComponent(args.join(" ")))
+                .then(result=>result.text())
+                .then(result => {
+                    cmd.multiLine(result.split("\n"));
+                    this.getStructure();
+                })
+        })
 
         cmd.registerCommand("edit", args => {
             const filename = args.shift();
             const found = this.open(filename);
             if(found) {
                 this.edit(filename, args.join(" "));
+            }
+        });
+
+        
+        cmd.registerCommand("rn", args => {
+            try {
+                const filename = args.shift();
+                const found = this.open(filename) || this.open(filename, "dir");
+                if(found) {
+                    this.rename(filename, args.join(" "));
+                }
+            } catch(e) {
+                throw new Error("File or Folder not found.")
+            }
+        });
+
+        cmd.registerCommand("append", args => {
+            const filename = args.shift();
+            const found = this.open(filename);
+            if(found) {
+                this.edit(filename, found.content + "↵" + args.join(" "));
             }
         });
 
@@ -120,27 +157,44 @@ window.fs = new Canv('canvas', {
                     const filename = split[split.length-1];
                     this.newFile(filename, result);
                 })
-        })
+        });
 
         cmd.registerCommand("exec", args => {
-            const filename = args.shift();
-            this.exec(filename);
+            this.exec(args);
         });
 
         cmd.registerCommand("php", args => {
-            const filename = args.shift();
-            this.exec(filename, "php");
+            this.exec(args, "php");
         });
 
         cmd.registerCommand("js", args => {
-            const filename = args.shift();
-            this.exec(filename, "js");
+            this.exec(args, "js");
         });
 
 
-        cmd.registerEvent("plugins-loaded", ()=> {
-            return this.exec("startup.dan");
-        })
+        cmd.registerEvent("write-output", args => {
+            if(this.writeOutput) {
+                this.edit(this.writeOutput, this.open(this.writeOutput).content + args.join("\n") + "\n");
+            }
+        });
+
+        cmd.registerCommand("wstart", args => {
+            const filename = args.shift();
+            try {
+                const found = this.open(filename);
+            } catch(e) {
+                this.newFile(filename, "");
+            }
+            this.writeOutput = filename;
+            cmd.run(args.join(" "), false);
+        });
+
+        cmd.registerCommand("wstop", args => {
+            if(this.writeOutput) {
+                this.writeOutput = false;
+            }
+        });
+
     },
 
     keyHandler(e) {
@@ -158,10 +212,15 @@ window.fs = new Canv('canvas', {
         return  "plugins/fs/" + this.opts.root + this.getPath().join("/");
     },
 
-    exec(filename, allow="all") {
+    exec(args, allow="all") {
         try {
+            let filename;
+            if(typeof args === "string") {
+                filename = args;
+            } else {
+                filename = args.shift();
+            }
             const found = this.open(filename);
-
             if(found) {
                 const split = filename.split(".");
                 const ext = split[split.length-1].toLowerCase();
@@ -171,20 +230,12 @@ window.fs = new Canv('canvas', {
                     } else if(ext === "dan") {
                         const command = found.content.split("\n")
                         .filter(l=>l.trim()!=="")
-                        .join(" && ");
-                        cmd.run(command, false);
+                        .forEach(c => cmd.run(c, false))
                     } else if(ext === "php") {
                         const realpath = this.getRealPath();
-                        fetch(realpath + "/" + filename)
+                        fetch(realpath + "/" + filename + args.join(" "))
                             .then(result => result.text())
-                            .then(result => {
-                                const lines = result.split("\n");
-                                cmd.removeLine("last");
-                                lines.forEach(line => {
-                                    cmd.newLine(line);
-                                });
-                                cmd.newLine();
-                            })
+                            .then(result => cmd.multiLine(result.split("\n")));
                     }
                 }
             }
@@ -226,6 +277,14 @@ window.fs = new Canv('canvas', {
         const found = this.open(filename);
         if(found) {
             found.content = content;
+            this.updateStructure();
+        }
+    },
+
+    rename(old_filename, new_filename) {
+        let found_file = this.open(old_filename) || this.open(old_filename, "dir");
+        if(found_file) {
+            found_file.name = new_filename;
             this.updateStructure();
         }
     },
@@ -279,12 +338,12 @@ window.fs = new Canv('canvas', {
             .then(result => result.json())
             .then(result => {
                 this.structure = result;
+                cmd.triggerEvent("files-loaded");
             })
         } else {
-            if(!this.opts.writeDisk) {
-                this.structure = localStorage["cli-fs"] ?
-                JSON.parse(localStorage.getItem("cli-fs")) : [];
-            }
+            this.structure = localStorage["cli-fs"] ?
+            JSON.parse(localStorage.getItem("cli-fs")) : [];
+            cmd.triggerEvent("files-loaded");
         }
     },
 

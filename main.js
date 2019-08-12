@@ -2,7 +2,7 @@ class Term extends Canv {
     constructor() {
         super('canvas', {
             colors: {
-                secondary: new Color(18, 0, 36),
+                secondary: new Color("#1f1f1f"),
                 primary: new Color(255, 255, 255),
 
                 grey: new Color(150),
@@ -39,6 +39,7 @@ class Term extends Canv {
                 this.autocomplete = [];
                 this.commands = {};
                 this.events = {};
+                this.pendingWrite = false;
                 this.history = localStorage["cli-history"] ?
                     JSON.parse(localStorage.getItem("cli-history")) : [];
 
@@ -155,12 +156,12 @@ class Term extends Canv {
                         } else if (e.key.length === 1) {
                             let maxWidth = (this.width / this.charWidth) - 1;
                             if (this.lines[lastLineIndex].text.length >= maxWidth) {
-                                this.lines.push(new this.line(
-                                    "",
-                                    this.colors.primary,
-                                    this.colors.secondary
-                                ));
-                                this.lines[lastLineIndex + 1].text += e.key;
+                                // this.lines.push(new this.line(
+                                //     "",
+                                //     this.colors.primary,
+                                //     this.colors.secondary
+                                // ));
+                                // this.lines[lastLineIndex + 1].text += e.key;
                             } else {
                                 if (this.cursorPos === false) {
                                     this.lines[lastLineIndex].text += e.key;
@@ -178,7 +179,8 @@ class Term extends Canv {
             },
 
 
-            newLine(line, color, link=false) {
+            newLine(line, color, link=false, ml=true) {
+                
                 if (typeof line === "undefined") {
                     this.lines.push(new this.line(
                         this.prefix,
@@ -207,7 +209,19 @@ class Term extends Canv {
                 this.cursorPos = false;
                 this.triggerEvent("newline");
                 this.clearGhosts();
+                if(ml && line) {
+                    this.triggerEvent("write-output", [line.text.toString()])
+                }
                 return line;
+            },
+
+            multiLine(lines) {
+                cmd.removeLine("last");
+                this.triggerEvent("write-output", lines);
+                lines.forEach(line => {
+                    cmd.newLine(line, false, false, false);
+                });
+                cmd.newLine();
             },
 
             log(result, color = this.colors.primary, link=false) {
@@ -215,10 +229,10 @@ class Term extends Canv {
                 this.newLine(line);
             },
 
-            triggerEvent(type) {
+            triggerEvent(type, args) {
                 if (Array.isArray(this.events[type])) {
                     this.events[type].forEach(handler => {
-                        handler();
+                        handler(args);
                     })
                 }
             },
@@ -246,11 +260,11 @@ class Term extends Canv {
                     color = this.colors.green;
                 } else if (typeof text === "object" && !(text instanceof Error)) {
                     color = this.colors.blue;
-                    // text = JSON.stringify(text, null, 2);
-                    // text.split("\n").forEach(line => {
-                    //     this.lines.push({text: line, color}); 
-                    // })
-                    // return false;
+                    text = JSON.stringify(text, null, 2);
+                    text.split("\n").forEach(line => {
+                        this.lines.push({text: line, color}); 
+                    })
+                    return false;
                 } else if (typeof text === "function") {
                     color = this.colors.orange;
                 } else if (typeof text === "undefined") {
@@ -296,6 +310,7 @@ class Term extends Canv {
                     ...this.history,
                     ...this.suggestions
                 ];
+                
 
                 const search = Array.from(new Set(searchOptions.filter(historyItem => {
                     let checkLastLine = this.lines[this.lines.length-1].text.replace(this.prefix, "");
@@ -338,6 +353,7 @@ class Term extends Canv {
                 if (nl) {
                     this.updateHistory(command);
                 }
+
                 command.split(" && ").forEach(c => {
                     const line = this.process(c);
                     if (line) {
@@ -351,7 +367,6 @@ class Term extends Canv {
 
             process(command, nl) {
                 let line = new this.line("", this.colors.primary, this.colors.secondary);
-
                 try {
                     let commands = Object.keys(this.commands);
                     let isCommand = false;
@@ -384,6 +399,7 @@ class Term extends Canv {
                 } catch (err) {
                     line.text = err;
                     line.color = this.colors.red;
+                    console.error(err);
                 }
 
                 return line;
@@ -415,7 +431,7 @@ class Term extends Canv {
             },
 
             getParams() {
-                let line = this.getLine("last").text;
+                let line = this.getLine("last").text.toString();
                 let params = line.replace(this.prefix, "");
                 params = params.split(" ");
                 params.shift();
@@ -508,29 +524,21 @@ class Term extends Canv {
                 this.loadPlugin("../../sketches/" + name, config);
             },
 
-            update(frame) {
-                this.cursor.color = this.colors.primary;
-                this.functions.forEach(fn => {
-                    if (typeof fn === "function") {
-                        fn(this);
-                    }
-                })
-            },
-
+            
             registerFunction(fn) {
                 this.functions.push(fn.bind(this));
                 return fn.toString();
             },
 
             registerCommand(name, handler) {
-                this.commands[name] = (params) => {
-                    const res = handler(params);
+                this.commands[name] = function() {
+                    const res = handler(...arguments);
                     if (res !== undefined) {
-                        this.log(res);
+                        this.newLine(res);
                     }
                 };
             },
-
+            
             registerSuggestion(suggestion) {
                 this.suggestions.push(suggestion);
             },
@@ -550,10 +558,22 @@ class Term extends Canv {
                 }
                 return undefined;
             },
+            
+            update(frame) {
+                this.cursor.color = this.colors.primary;
+                this.functions.forEach(fn => {
+                    if (typeof fn === "function") {
+                        fn(this);
+                    }
+                });
+
+                this.height = ((this.lines.length + 1) * this.lineHeight);
+            },
 
             draw() {
                 if (this.loaded) {
                     this.background = this.colors.secondary;
+                    document.body.style.background = this.colors.secondary;
 
                     let lastLineWidth = 0;
                     this.lines.forEach((line, i) => {
@@ -620,9 +640,14 @@ class Term extends Canv {
                     this.cursor.y = ((this.lines.length - 1) * this.lineHeight) + 3;
                     this.cursor.height = this.lineHeight;
 
-
                     this.add(this.cursor);
                     this.add(this.view);
+
+                    if(this.height > this.canvas.parentNode.clientHeight) {
+                        this.canvas.parentNode.style.overflowY = "scroll";
+                    } else {
+                        this.canvas.parentNode.style.overflowY = "hidden";
+                    }
                 }
             }
         });

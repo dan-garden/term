@@ -10,10 +10,12 @@ new Canv('canvas', {
                 fetch(params[0])
                 .then(result => type === "json" ? result.json() : result.text())
                 .then(result => {
-                    cmd.log(result);
-                    cmd.newLine();
+                    if(type === "text") {
+                        cmd.multiLine(result.split("\n"));
+                    } else {
+                        cmd.log(result);
+                    }
                 });
-                return "Fetching data";
             } else {
                 return new Error("Invalid URL");
             }

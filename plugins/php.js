@@ -83,7 +83,7 @@ new Canv('canvas', {
             // "parse_url",
             // "func_get_args",
             // "end",
-            "base_encode": val => btoa(val),
+            "base64_encode": val => btoa(val),
             // "unserialize",
             "max": function (arr) {
                 return (typeof arr === "array") ? Math.max(...arr) : Math.max(...arguments)
@@ -128,6 +128,9 @@ new Canv('canvas', {
 
 
         cmd.registerSuggestions(Object.keys(php));
+        cmd.registerCommand("php", args => {
+            console.log(args);
+        })
         Object.keys(php).forEach(func_name => {
             window[func_name] = php[func_name];
         });
