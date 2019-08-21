@@ -163,13 +163,10 @@ new Canv('canvas', {
 
                     if(this.closeHandler) {
                         const action = document.createElement("button");
-                        action.innerText = "Action";
+                        action.innerText = "Save";
                         action.classList.add("editor-modal-action");
                         action.onclick = () => {
-                            if(this.closeHandler) {
-                                this.closeHandler(this.editor.getValue());
-                                this.editor.focus();
-                            }
+                            this.close(true);
                         }
                         bodyDom.append(action);
                     }
@@ -206,10 +203,10 @@ new Canv('canvas', {
                 cmd.overlays = [this];
             }
 
-            close() {
+            close(execAction=false) {
                 editorModal.style.display = "none";
                 cmd.overlays = [];
-                if(this.closeHandler) {
+                if(this.closeHandler && execAction) {
                     if(this.code) {
                         this.closeHandler(this.editor.getValue());
                     } else {

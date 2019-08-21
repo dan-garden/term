@@ -94,6 +94,7 @@ class Term extends Canv {
                             this.lines[this.lines.length - 1].text = newLine;
                             this.cursorPos += pasteData.length;
                         }
+                        this.setGhostText(this.getGhostText());
                     }
                 });
             },

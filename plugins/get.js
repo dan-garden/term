@@ -12,7 +12,7 @@ new Canv('canvas', {
                 .then(result => {
                     if(type === "json") {
                         // cmd.log(result);
-                        new cmd.popup("unkonwn.json", JSON.stringify(result, null, 2), true, json => {
+                        new cmd.popup("filename.json", JSON.stringify(result, null, 2), true, json => {
                             const filename = prompt("Enter a filename...", "filename.json");
                             if(filename) {
                                 fs.newFile(filename, json);
