@@ -17,7 +17,7 @@ window.fs = new Canv('canvas', {
 
         cmd.registerEvent("files-loaded", () => {
             if(!this.loadedFirst) {
-                this.exec("startup.dan");
+                // this.exec("startup.dan");
                 this.loadedFirst = true;
             }
         })
@@ -28,6 +28,9 @@ window.fs = new Canv('canvas', {
             const dir = this.getCurrent();
             if(dir) {
                 const content = dir.content || dir;
+
+                // content.unshift({ name: "..", type: "dir" })
+
                 for(let i = 0; i < content.length; i++) {
                     const struct = content[i];
                     if(struct.type === "dir") {
@@ -41,6 +44,8 @@ window.fs = new Canv('canvas', {
                         });
                     }
                 }
+
+                // content.shift();
             } else {
 
             }
@@ -92,7 +97,7 @@ window.fs = new Canv('canvas', {
         });
 
         cmd.registerCommand("shell_exec", args => {
-            fetch("plugins/fs/shell_exec.php?cmd="+encodeURIComponent(args.join(" ")))
+            fetch("plugins/fs/shell_exec.php?cmd="+encodeURIComponent(args.join(" ")) + "&dir="+encodeURIComponent(this.path))
                 .then(result=>result.text())
                 .then(result => {
                     cmd.multiLine(result.split("\n"));
@@ -142,7 +147,7 @@ window.fs = new Canv('canvas', {
             const filename = args.shift();
             let found = this.open(filename);
 
-            const editor = new cmd.editor(filename, found.content, val => {
+            const editor = new cmd.popup(filename, found.content, true, val => {
                 this.edit(filename, val);
                 // cmd.run("exec "+filename);
             });
@@ -335,7 +340,12 @@ window.fs = new Canv('canvas', {
     getStructure() {
         if(this.opts.readDisk) {
             fetch("plugins/fs/get.php?root="+this.opts.root)
-            .then(result => result.json())
+            .then(result => {
+                return result.text();
+            })
+            .then(result => {
+                return JSON.parse(result);
+            })
             .then(result => {
                 this.structure = result;
                 cmd.triggerEvent("files-loaded");

@@ -1,7 +1,6 @@
 {
     "detect/index": {},
     "shortcodes": {},
-    "line-numbers": {},
     "clock": {},
     "hangman": {},
     "monitor": {},
@@ -10,6 +9,7 @@
     "shape-maker": {},
     "localstorage": {},
     "popups": {},
+    "git": {},
     "google": {},
     "color-picker": {},
     "php": {},

@@ -128,11 +128,11 @@ new Canv('canvas', {
 
 
         cmd.registerSuggestions(Object.keys(php));
-        cmd.registerCommand("php", args => {
-            console.log(args);
-        })
         Object.keys(php).forEach(func_name => {
             window[func_name] = php[func_name];
+            cmd.registerCommand(func_name, args => {
+                return php[func_name](...args);
+            })
         });
 
 

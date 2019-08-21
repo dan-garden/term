@@ -1,0 +1,25 @@
+1. Uncaught Exception: AutoExecute Query 'swusers'
+    - This is an error with MySQL and not Kayako.
+    - Most are related to the swusers column which could indicate that this particular table is corrupted, full or improperly indexed.
+    - Re-indexing the table or running a full repair scan could fix this issue.
+    - Table may have crashed because buffer reached its limit.
+
+    - Steps to mitigate (run these commands): 
+        a. service httpd stop
+        b. service mysqld stop
+        c. myisamchk -s /var/lib/mysql/*/*/.MYI  (This will show tables that are broken)
+        
+        To increase buffer size: 
+        d. myisamchk -r -q /var/lib/mysql/kayako_fusion/swsearchindex.MYI --sort_buffer_size=3G
+        
+        When done start the service back up:
+        e. service mysqld start
+        f. service httpd start
+      
+
+
+2. AutoExcecute Query 'swbayeswords'
+
+
+addition to the file
+

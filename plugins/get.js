@@ -10,10 +10,16 @@ new Canv('canvas', {
                 fetch(params[0])
                 .then(result => type === "json" ? result.json() : result.text())
                 .then(result => {
-                    if(type === "text") {
-                        cmd.multiLine(result.split("\n"));
+                    if(type === "json") {
+                        // cmd.log(result);
+                        new cmd.popup("unkonwn.json", JSON.stringify(result, null, 2), true, json => {
+                            const filename = prompt("Enter a filename...", "filename.json");
+                            if(filename) {
+                                fs.newFile(filename, json);
+                            }
+                        });
                     } else {
-                        cmd.log(result);
+                        cmd.multiLine(result.split("\n"));
                     }
                 });
             } else {

@@ -1,0 +1,2 @@
+- Subscription based payments, will have to use the same CSR.
+- New CSR should be generated every 12 months.

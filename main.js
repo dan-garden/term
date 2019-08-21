@@ -2,8 +2,11 @@ class Term extends Canv {
     constructor() {
         super('canvas', {
             colors: {
-                secondary: new Color("#1f1f1f"),
-                primary: new Color(255, 255, 255),
+                primary: new Color("#ffffff"),
+                secondary: new Color("#000000"),
+
+                // primary: Color.random(),
+                // secondary: Color.random(),
 
                 grey: new Color(150),
 
@@ -51,7 +54,7 @@ class Term extends Canv {
                 this.lineHeight = 14;
                 this.fontFamily = "monospace";
                 this.fontSize = 14;
-                this.textIndent = 0;
+                this.textIndent = 5;
 
                 this.cursorPos = false;
                 this.cursor = new Rect(0, 0, 1, this.lineHeight - 2).setColor(this.colors.primary);
@@ -534,7 +537,7 @@ class Term extends Canv {
                 this.commands[name] = function() {
                     const res = handler(...arguments);
                     if (res !== undefined) {
-                        this.newLine(res);
+                        cmd.log(res);
                     }
                 };
             },
@@ -596,8 +599,8 @@ class Term extends Canv {
                             if(line.link) {
                                 const origColor = text.color;
                                 if(bg.contains(this.mouseX, this.mouseY)) {
-                                    text.color = this.colors.secondary;
-                                    bg.color = this.colors.primary;
+                                    // text.color = this.colors.secondary;
+                                    // bg.color = this.colors.primary;
                                     if(this.mouseDown && !line.clicked) {
                                         line.clicked = true;
                                         if(typeof line.link === "string") {

@@ -5,7 +5,7 @@ function getStructure() {
     $fs = [];
     function recursiveGet($fs, $dir) {
         $contents = scandir($dir);
-        $blacklist = ["png", "svg"];
+        $blacklist = ["png", "svg", "exe", "ogg"];
         foreach($contents as $contentItem) {
             if($contentItem != "." && $contentItem != "..") {
                 $contentItemObj = [
@@ -20,13 +20,23 @@ function getStructure() {
                 } else {
                     //File
                     $contentItemObj["type"] = "file";
-
+                    
                     $pathInfo = pathinfo($path);
-                    $fileExt = strtolower($pathInfo['extension']);
+                    
+                    if (strpos($pathInfo["dirname"], '.git') === false) {
+                        $fileExt = strtolower($pathInfo['extension']);
+                        $contentItemObj["content"] = in_array($fileExt, $blacklist) ? "" : file_get_contents($path);
+                        // print_r($pathInfo);
+                    } else {
+                        $contentItemObj["content"] = "";
+                    }
 
-                    $contentItemObj["content"] = in_array($fileExt, $blacklist) ? "" : file_get_contents($path);
                 }
+
                 $fs[] = $contentItemObj;
+                if($contentItemObj["content"] !== "") {
+                }
+
             }
         }
         return $fs;
@@ -41,7 +51,8 @@ function getStructure() {
 
 
 try {
-    echo json_encode(getStructure(), JSON_PRETTY_PRINT);
+    $result = json_encode(getStructure(), JSON_PRETTY_PRINT);
+    echo $result;
 } catch(Exception $e) {
     echo json_encode(["error" => $e->getMessage()]);
 }
