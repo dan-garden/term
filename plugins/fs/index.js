@@ -10,6 +10,7 @@ window.fs = new Canv('canvas', {
 
         
         this.path = "/";
+        this.prefix = cmd.prefix;
         this.loadedFirst = false;
         this.writeOutput = false;
         this.updatePrefix();
@@ -165,7 +166,7 @@ window.fs = new Canv('canvas', {
         });
 
         cmd.registerCommand("exec", args => {
-            this.exec(args);
+            return this.exec(args);
         });
 
         cmd.registerCommand("php", args => {
@@ -231,7 +232,7 @@ window.fs = new Canv('canvas', {
                 const ext = split[split.length-1].toLowerCase();
                 if(allow === "all" || ext === allow) {
                     if(ext === "js") {
-                        eval.apply(cmd, [found.content]);
+                        return eval.apply(cmd, [found.content]);
                     } else if(ext === "dan") {
                         const command = found.content.split("\n")
                         .filter(l=>l.trim()!=="")
@@ -413,7 +414,7 @@ window.fs = new Canv('canvas', {
         if(path.length > 0) {
             displayPath = path[path.length-1];
         }
-        cmd.prefix = "" + displayPath + " $ ";
+        cmd.prefix = "" + displayPath + " " + this.prefix;
     },
 
 

@@ -13,7 +13,7 @@ new Canv('canvas', {
                 display: none;
                 position: fixed;
                 z-index: 1;
-                padding-top: 100px;
+                padding: 30px 0;
                 left: 0;
                 top: 0;
                 width: 100%;
@@ -113,8 +113,25 @@ new Canv('canvas', {
         let closeFunction = () => { console.error("Modal error") };
         const closeBtn = document.getElementsByClassName("editor-close")[0];
         closeBtn.onclick = () => closeFunction();
-        window.onclick = (event) => event.target === editorModal && closeFunction();
-        window.addEventListener("keyup", e => e.key === "Escape" && closeFunction());
+        window.onclick = (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            if(event.target === editorModal) {
+                closeFunction();
+            }
+        }
+        window.addEventListener("keyup", e => {
+            if(e.key === "Escape") {
+                closeFunction()
+            }
+        });
+
+        window.addEventListener("keydown", e => {
+            if(e.ctrlKey && e.key === "s" && cmd.overlays.length) {
+                e.preventDefault();
+                closeFunction(true);
+            }
+        });
 
         cmd.popup = class {
             constructor(title=null, body=null, code=false, onclose=false) {

@@ -5,17 +5,17 @@ class Term extends Canv {
                 primary: new Color("#ffffff"),
                 secondary: new Color("#000000"),
 
-                // primary: Color.random(),
-                // secondary: Color.random(),
+                primary: new Color(255, 255, 255),
+                secondary: new Color(18, 0, 36),
 
                 grey: new Color(150),
 
-                magenta: new Color(213, 31, 222),
-                orange: new Color(255, 140, 0),
-                yellow: new Color(255, 255, 0),
-                red: new Color(255, 100, 100),
-                green: new Color(100, 255, 100),
-                blue: new Color(100, 100, 255),
+                magenta: new Color(223, 98, 235),
+                orange: new Color(240, 106, 65),
+                yellow: new Color(226, 226, 94),
+                red: new Color(212, 49, 53),
+                green: new Color(135, 255, 138),
+                blue: new Color(47, 197, 220),
 
                 link: new Color(255, 140, 0)
             },
@@ -301,6 +301,11 @@ class Term extends Canv {
                 this.lines.splice(n, 1);
             },
 
+            clear() {
+                this.lines = [];
+                this.triggerEvent("clear");
+            },
+
             clearGhosts() {
                 this.lines.map(line => {
                     line.ghost = false;
@@ -531,7 +536,13 @@ class Term extends Canv {
             
             registerFunction(fn) {
                 this.functions.push(fn.bind(this));
-                return fn.toString();
+                return this.functions.length-1;
+            },
+
+
+            removeFunction(fn_id) {
+                this.functions.splice(fn_id, 1);
+                return true;
             },
 
             registerCommand(name, handler) {

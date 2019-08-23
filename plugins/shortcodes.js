@@ -37,13 +37,11 @@ new Canv('canvas', {
         })
 
         cmd.registerCommand("clear", args => {
-            cmd.lines = [];
-            cmd.triggerEvent("clear");
+            cmd.clear();
         });
 
         cmd.registerCommand("cls", args => {
-            cmd.lines = [];
-            cmd.triggerEvent("clear");
+            cmd.clear();
         });
 
         cmd.registerCommand("echo", args => {
