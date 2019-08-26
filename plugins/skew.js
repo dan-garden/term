@@ -1,4 +1,4 @@
-window.transform = new Canv('canvas', {
+window.transform = new Canv('#main', {
     opts: {
         scale: new Vector(1, 1),
         skew: new Vector(0, 0),

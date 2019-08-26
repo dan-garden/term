@@ -1,13 +1,7 @@
 {
-    "detect/index": {},
     "shortcodes": {},
-    "clock": {},
-    "hangman": {},
-    "monitor": {},
     "get": {},
     "url-exec": {},
-    "shape-maker": {},
-    "localstorage": {},
     "popups": {},
     "git": {},
     "google": {},
@@ -15,9 +9,7 @@
     "php": {},
     "remote": {},
     "reddit": {},
-    "line-game": {},
-    "notes": {},
-    "skew": {},
     "readable": {},
+    "voice-recognition": {},
     "fs/index": {}
 }

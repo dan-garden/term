@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         // https://www.exakat.io/top-100-php-functions/
 

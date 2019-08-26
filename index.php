@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <?php require_once("../menu.php"); ?>
-    <canvas></canvas>
+    <!-- <?php require_once("../menu.php"); ?> -->
+    <canvas id="main"></canvas>
     <script src="main.js"></script>
 </body>
 

@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         this.src = false;
         this.bg = false;

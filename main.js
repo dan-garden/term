@@ -233,10 +233,13 @@ class Term extends Canv {
                 this.newLine(line);
             },
 
-            triggerEvent(type, args) {
+            triggerEvent(type, args=[]) {
+                if(!Array.isArray(args)) {
+                    args = [args];
+                }
                 if (Array.isArray(this.events[type])) {
                     this.events[type].forEach(handler => {
-                        handler(args);
+                        handler(...args);
                     })
                 }
             },
@@ -503,6 +506,15 @@ class Term extends Canv {
                     });
             },
 
+            pluginExists(name) {
+                let plugins = Object.keys(this.plugins).map(r => r.split("/")[0]);
+                return plugins.includes(name);
+            },
+
+            commandExists(name) {
+                let commands = Object.keys(this.commands);
+                return commands.includes(name);
+            },
 
             loadPlugins() {
                 fetch("./plugins.json")
@@ -564,13 +576,19 @@ class Term extends Canv {
 
             img(src) {
                 const l = new cmd.line("");
-                l.img = new Pic(src, 0, 0, 100, 100);
-                this.newLine(l);
-                for(let i = 0; i < (l.img.height/this.lineHeight)-2; i++) {
-                    let br = new cmd.line("");
-                    br.background = false;
-                    this.newLine(br);
-                }
+                l.img = new Pic(src, 0, 0, null, null, () => {
+                    cmd.removeLine("last");
+                    this.newLine(l);
+
+                    for(let i = 0; i < (l.img.height/this.lineHeight)-1; i++) {
+                        let br = new cmd.line("");
+                        br.background = false;
+                        this.newLine(br);
+                    }
+
+                    this.newLine();
+                });
+
                 return undefined;
             },
             
@@ -639,7 +657,7 @@ class Term extends Canv {
                         this.add(text);
 
                         if(line.img) {
-                            line.img.setPos(text.x, text.y);
+                            line.img.setPos(text.x, text.y + 5);
                             this.add(line.img);
                         }
 

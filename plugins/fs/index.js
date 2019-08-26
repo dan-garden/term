@@ -1,4 +1,4 @@
-window.fs = new Canv('canvas', {
+window.fs = new Canv('#main', {
     setup() {
         this.structure = [];
 
@@ -18,7 +18,7 @@ window.fs = new Canv('canvas', {
 
         cmd.registerEvent("files-loaded", () => {
             if(!this.loadedFirst) {
-                // this.exec("startup.dan");
+                this.exec("startup.dan");
                 this.loadedFirst = true;
             }
         })

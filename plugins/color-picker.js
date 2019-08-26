@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet", "black", "white"];
 

@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         this.origLines = false;
 
@@ -40,9 +40,7 @@ new Canv('canvas', {
             cmd.clear();
         });
 
-        cmd.registerCommand("cls", args => {
-            cmd.clear();
-        });
+        cmd.registerCommand("cls", cmd.commands["clear"]);
 
         cmd.registerCommand("echo", args => {
             cmd.newLine(args.join(" "))
@@ -92,6 +90,12 @@ new Canv('canvas', {
         cmd.registerCommand("log", args => {
             cmd.log(eval(args.join(" ")));
         });
+
+        cmd.registerCommand("image", args => {
+            return cmd.img(args.join(" "));
+        });
+
+        cmd.registerCommand("img", cmd.commands["image"]);
 
         cmd.registerCommand("interval", args => {
             const timing = args.shift();

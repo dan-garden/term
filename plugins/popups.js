@@ -6,7 +6,7 @@ class Style {
     }
 }
 
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         document.head.appendChild(new Style(`
             .editor-modal {
@@ -44,7 +44,7 @@ new Canv('canvas', {
             
             .editor-close:hover,
             .editor-close:focus {
-                color: #000;
+                color: ${new Color(cmd.colors.primary).invert()};
                 text-decoration: none;
                 cursor: pointer;
             }
@@ -54,13 +54,14 @@ new Canv('canvas', {
                 color: ${cmd.colors.primary};
                 font-family: ${cmd.fontFamily};
                 text-align: center;
+                font-size: 20px;
                 margin-bottom: 10px;
-
+                padding: 0 15px;
             }
 
             .editor-modal-body {
                 text-align: center;
-                font-size: 14px;
+                font-size: 16px;
                 font-family: ${cmd.fontFamily};
             }
 

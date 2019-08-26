@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     show: 0,
     indent: 30,
     setup() {

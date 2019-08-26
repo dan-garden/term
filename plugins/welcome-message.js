@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         const greeting = `Welcome to Dan's Terminal`;
         greeting.split("\n").forEach(line => cmd.newLine(line));

@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         cmd.registerCommand("c-new", args => {
             if(args.length > 0) {

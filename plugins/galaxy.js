@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         this.stars = new ShapeGroup();
         cmd.view.add(this.stars);

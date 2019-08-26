@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         this.running = false;
         cmd.registerCommand("line-game start", args => {

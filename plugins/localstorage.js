@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         cmd.registerCommand("local", args => {
             const act = args.shift();

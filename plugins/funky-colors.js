@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         this.default = Object.assign({}, cmd.colors);
         this.colors = {

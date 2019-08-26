@@ -1,4 +1,4 @@
-new Canv('canvas', {    
+new Canv('#main', {    
     setup() {
         cmd.registerCommand("date", args => {
             cmd.newLine(new Date().toString());

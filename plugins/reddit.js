@@ -1,4 +1,4 @@
-window.reddit = new Canv('canvas', {
+window.reddit = new Canv('#main', {
     setup() {
         this.sub = false;
         cmd.registerCommand("reddit", args => {

@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         this.display = [];
         cmd.log(this.display, cmd.colors.green);

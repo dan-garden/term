@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         cmd.registerCommand("readable", args => {
             const r = args.shift();

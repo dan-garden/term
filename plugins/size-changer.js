@@ -1,4 +1,4 @@
-new Canv('canvas', {
+new Canv('#main', {
     setup() {
         this.buttons = new ShapeGroup({ increase: new Rect, decrease: new Rect });
 
