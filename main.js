@@ -6,7 +6,7 @@ class Term extends Canv {
                 secondary: new Color("#000000"),
 
                 primary: new Color(255, 255, 255),
-                secondary: new Color(18, 0, 36),
+                secondary: new Color(39, 40, 34),
 
                 grey: new Color(150),
 

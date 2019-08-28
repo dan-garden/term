@@ -27,7 +27,7 @@ new Canv('#main', {
                 background-color: ${cmd.colors.secondary};
                 margin: auto;
                 padding: 0 20px;
-                border: 1px solid #888;
+                // border: 1px solid ${cmd.colors.primary};
                 width: 80%;
                 position: relative;
                 color: ${cmd.colors.primary};
@@ -66,7 +66,8 @@ new Canv('#main', {
             }
 
             .editor-code-container {
-                height: 300px;
+                height: 80vh;
+                border: 1px solid ${cmd.colors.primary};
             }
 
             .editor-modal-action {
@@ -118,7 +119,7 @@ new Canv('#main', {
             event.stopPropagation();
             event.preventDefault();
             if(event.target === editorModal) {
-                closeFunction();
+                closeFunction(true);
             }
         }
         window.addEventListener("keyup", e => {
@@ -160,12 +161,15 @@ new Canv('#main', {
 
                     let mode = "text";
                     let split = title.split(".");
+                    let exec = false;
                     let extension = split[split.length-1];
 
                     if(extension === "js") {
                         mode = "javascript";
+                        exec = true;
                     } else if(extension === "php") {
                         mode = "php";
+                        exec = true;
                     } else if(extension === "json") {
                         mode = "json";
                     } else if(extension === "css") {
@@ -177,7 +181,8 @@ new Canv('#main', {
                     this.editor.session.setMode("ace/mode/" + mode);
                     cmd.overlays[0].editor.focus();
                     const containerDom = bodyDom.querySelector(".editor-code-container");
-                    containerDom.style.height = "300px";
+                    containerDom.style.height = "80vh";
+
 
                     if(this.closeHandler) {
                         const action = document.createElement("button");
@@ -187,6 +192,18 @@ new Canv('#main', {
                             this.close(true);
                         }
                         bodyDom.append(action);
+                    }
+
+                    if(this.closeHandler && exec) {
+                        const execBtn = document.createElement("button");
+                        execBtn.innerText = "Save & Exec";
+                        execBtn.classList.add("editor-modal-action");
+                        execBtn.onclick = () => {
+                            this.close(true);
+                            cmd.run("exec " + title, false);
+                            cmd.newLine();
+                        }
+                        bodyDom.append(execBtn);
                     }
 
                     const cancel = document.createElement("button");

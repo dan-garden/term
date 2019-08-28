@@ -250,7 +250,7 @@ window.fs = new Canv('#main', {
         }
     },
 
-    newFile(name, content) {
+    newFile(name, content="") {
         if(this.exists(name)) {
             throw new Error("File already exists.");
         }
