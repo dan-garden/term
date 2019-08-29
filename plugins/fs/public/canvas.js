@@ -1,3 +1,5 @@
-updateRender({
-    
+canvasRenderer.updateRender({
+    setup() {
+        
+    }
 });

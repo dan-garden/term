@@ -5,7 +5,7 @@ class Term extends Canv {
                 primary: new Color("#ffffff"),
                 secondary: new Color("#000000"),
 
-                primary: new Color(255, 255, 255),
+                primary: new Color(255),
                 secondary: new Color(39, 40, 34),
 
                 grey: new Color(150),
@@ -274,6 +274,10 @@ class Term extends Canv {
                     return false;
                 } else if (typeof text === "function") {
                     color = this.colors.orange;
+                    // text.toString().split("\n").forEach(line => {
+                    //     this.lines.push({text: line, color}); 
+                    // });
+                    // return false;
                 } else if (typeof text === "undefined") {
                     color = this.colors.grey;
                     return;

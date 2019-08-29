@@ -1,41 +1,60 @@
 window.canvasRenderer = new Canv('canvas', {
     filename: "canvas.js",
     setup() {
-        cmd.registerEvent("files-loaded", () => {
-            const renderDom = document.createElement('canvas');
-            renderDom.id = "render";
-            document.body.append(renderDom);
+        if(cmd.pluginExists("fs")) {
+            cmd.registerEvent("files-loaded", () => {
+                const renderDom = document.createElement('canvas');
+                renderDom.id = "render";
+                document.body.append(renderDom);
+        
+                window.render = false;
     
-            window.render = false;
+                if(!fs.exists(this.filename)) {
+                    fs.newFile(this.filename, `canvasRenderer.updateRender({});`);
+                }
+    
+    
+                this.renderCode = false;
+                cmd.registerFunction(() => {
+                    if(fs.path === "/") {
+                        try {
+                            const file = fs.open(this.filename);
+                            if(file) {
+                                if(this.renderCode!==file.content) {
+                                    this.renderCode = file.content;
+                                    fs.exec(this.filename);
+                                }
+                            }
+                        } catch {
 
-            if(!fs.exists(this.filename)) {
-                fs.newFile(this.filename);
-            }
-
-
-            this.renderCode = false;
-            cmd.registerFunction(() => {
-                const file = fs.open(this.filename);
-                if(this.renderCode!==file.content) {
+                        }
+                    }
+                });
+    
+                cmd.registerCommand("render-update", () => {
+                    const file = fs.open(this.filename);
                     this.renderCode = file.content;
                     fs.exec(this.filename);
-                }
+                });
+                
+                cmd.registerCommand("render-capture", () => {
+                    if(window.render) {
+                        cmd.run("img {{render.toDataURL()}}", false);
+                    }
+                })
             });
-
-            cmd.registerCommand("update-render", () => {
-                const file = fs.open(this.filename);
-                this.renderCode = file.content;
-                fs.exec(this.filename);
-            })
-        });
-    },
+        }
+    },                                         
 
     updateRender(config) {
         if(window.render) {
             window.render.stop();
         }
-        window.render = new Canv('#render', config);
-
+        try {
+            window.render = new Canv('#render', config);
+        } catch(e) {
+            console.error(e);
+        }
         window.render.width = 400;
         window.render.height = 400;
         window.render.canvas.style.position = "fixed";
