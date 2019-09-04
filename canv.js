@@ -283,8 +283,11 @@ class Shape {
         return this;
     }
 
-    setStroke(n) {
+    setStroke(n, s) {
         this.stroke = new Color(n);
+        if(s) {
+            this.setStrokeWidth(s);
+        }
         this.showStroke = true;
         return this;
     }
@@ -454,15 +457,15 @@ class ShapeGroup {
         })
     }
 
-    shrink(n) {
+    shrink(n=1) {
         this.forEach(s => s.size -= n)
     }
 
-    grow(n) {
+    grow(n=1) {
         this.forEach(s => s.size += n)
     }
 
-    rotate(n) {
+    rotate(n=1) {
         this.forEach(shape => shape.angle += n);
         return this;
     }
@@ -878,7 +881,7 @@ class BarGraph extends ShapeGroup {
             let c = field.color;
             const s = this.shadow;
             const bar = new ShapeGroup({
-                shadow: new Rect(x + s, y - s, w, h + s).setColor(c.shade(-100)),
+                shadow: new Rect(x + s, y - s, w, h + s).setColor(new Color(c).shade(-100)),
                 bar: new Rect(x, y, w, h).setColor(c),
                 text: field.label ? new Text(field.label, x, y - 2 - s).setSize(12).setFont("Verdana") : new Rect(-100, -100, 0, 0),
             });
@@ -1241,6 +1244,10 @@ class Canv {
 
     toDataURL() {
         return this.canvas.toDataURL(...arguments);
+    }
+
+    snapshot() {
+        return this.toDataURL(...arguments);
     }
 
     getPixels(x=0, y=0, w=this.width, h=this.height) {

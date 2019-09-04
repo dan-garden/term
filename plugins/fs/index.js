@@ -137,10 +137,16 @@ window.fs = new Canv('#main', {
 
         cmd.registerCommand("open", args => {
             const filename = args.join(" ");
-            const found = this.open(filename);
-            if(found) {
+            const folder = this.open(filename, "dir");
+            if(folder) {
                 const realpath = this.getRealPath();
-                window.open(realpath + "/" + filename);
+                window.open(realpath + "/" + filename + "/");
+            } else {
+                const file = this.open(filename);
+                if(file) {
+                    const realpath = this.getRealPath();
+                    window.open(realpath + "/" + filename);
+                }
             }
         });
 
@@ -180,7 +186,7 @@ window.fs = new Canv('#main', {
 
         cmd.registerEvent("write-output", args => {
             if(this.writeOutput) {
-                this.edit(this.writeOutput, this.open(this.writeOutput).content + args.join("\n") + "\n");
+                this.edit(this.writeOutput, this.open(this.writeOutput).content + args.split("\n").join("\n") + "\n");
             }
         });
 
@@ -272,6 +278,16 @@ window.fs = new Canv('#main', {
             content: []
         });
         this.updateStructure();
+    },
+
+    move(from, to) {
+        const found = this.open(from, "file");
+        if(found) {
+            this.newFile(to, found.content);
+            this.delete(from);
+            this.getStructure();
+            return found;
+        }
     },
 
     exists(name) {
@@ -386,7 +402,10 @@ window.fs = new Canv('#main', {
     },
 
     changeDirectory(dir) {
-        if(dir === this.path || dir === ".") {
+        if(dir === "~") {
+            this.path = "/";
+            return true;
+        } else if(dir === this.path || dir === ".") {
             return true;
         } else if(dir === "..") {
             const path = this.getPath();

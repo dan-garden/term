@@ -10,7 +10,19 @@ window.canvasRenderer = new Canv('canvas', {
                 window.render = false;
     
                 if(!fs.exists(this.filename)) {
-                    fs.newFile(this.filename, `canvasRenderer.updateRender({});`);
+                    fs.newFile(this.filename, `canvasRenderer.updateRender({
+    setup() {
+        
+    },
+
+    update() {
+        
+    },
+
+    draw() {
+        
+    }
+});`);
                 }
     
     
@@ -51,6 +63,19 @@ window.canvasRenderer = new Canv('canvas', {
             window.render.stop();
         }
         try {
+            if(config.setup) {
+                const update_clone = config.update || function() {};
+                const setup_clone = config.setup;
+                delete config.setup;
+                config.update = function (frames) {
+                    if(frames === 1) {
+                        setup_clone.bind(this)();
+                    }
+                    update_clone.bind(this)(frames);
+                }
+            }
+
+
             window.render = new Canv('#render', config);
         } catch(e) {
             console.error(e);
