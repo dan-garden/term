@@ -42,6 +42,7 @@ class Term extends Canv {
                 this.autocomplete = [];
                 this.commands = {};
                 this.events = {};
+                this.oldColors = false;
                 this.pendingWrite = false;
                 this.history = localStorage["cli-history"] ?
                     JSON.parse(localStorage.getItem("cli-history")) : [];
@@ -49,7 +50,6 @@ class Term extends Canv {
                 this.curHistoryIndex = this.history.length;
 
                 this.view = new ShapeGroup;
-
                 this.maxHistory = 10000;
                 this.lineHeight = 14;
                 this.fontFamily = "monospace";
@@ -67,6 +67,16 @@ class Term extends Canv {
 
                 // this.registerSuggestions(Object.keys(this).map(c => "cmd." + c));
                 // window.console = this;
+
+                this.registerFunction(() => {
+                    if(this.frames % 100 === 0) {
+                        let colorString = JSON.stringify(this.colors);
+                        if(this.oldColors !== colorString) {
+                            this.triggerEvent("color-change");
+                            this.oldColors = colorString;
+                        }
+                    }
+                });
             },
 
             visible() {

@@ -416,6 +416,27 @@ class ShapeGroup {
         return this;
     }
 
+    map(fn) {
+        if(typeof fn === "function") {
+            for(let i = this.length-1; i >= 0; --i) {
+                this.shapes[i] = fn(this.shapes[i], i);
+            }
+        }
+        return this;
+    }
+
+    filter(fn) {
+        if(typeof fn === "function") {
+            for(let i = this.length-1; i >= 0; --i) {
+                let f = fn(this.shapes[i], i);
+                if(!f) {
+                    this.remove(i);                           
+                }
+            }
+        }
+        return this;
+    }
+
     noStroke() {
         this.forEach(shape => shape.noStroke());
     }
@@ -897,6 +918,8 @@ class Grid extends ShapeGroup {
 
         const cw = width / cols;
         const ch = height / rows;
+        const white = new Color(255);
+        const black = new Color(0);
 
         for(let i = 0; i < cols; i++) {
             for(let j = 0; j < rows; j++) {
@@ -905,6 +928,8 @@ class Grid extends ShapeGroup {
                 const cell = new Rect(cx, cy, cw, ch);
                 cell.posx = i;
                 cell.posy = j;
+                cell.color = white;
+                cell.setStroke(1, black);
                 this.cells.push(cell);
             }
         }

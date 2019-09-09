@@ -6,30 +6,13 @@ window.canvasRenderer = new Canv('canvas', {
                 const renderDom = document.createElement('canvas');
                 renderDom.id = "render";
                 document.body.append(renderDom);
-        
                 window.render = false;
-    
-                if(!fs.exists(this.filename)) {
-                    fs.newFile(this.filename, `canvasRenderer.updateRender({
-    setup() {
-        
-    },
-
-    update() {
-        
-    },
-
-    draw() {
-        
-    }
-});`);
-                }
-    
-    
                 this.renderCode = false;
+                this.createFile();
                 cmd.registerFunction(() => {
                     if(fs.path === "/") {
                         try {
+                            this.createFile();
                             const file = fs.open(this.filename);
                             if(file) {
                                 if(this.renderCode!==file.content) {
@@ -56,7 +39,25 @@ window.canvasRenderer = new Canv('canvas', {
                 })
             });
         }
-    },                                         
+    },
+
+    createFile() {
+        if(!fs.exists(this.filename)) {
+            fs.newFile(this.filename, `canvasRenderer.updateRender({
+    setup() {
+
+    },
+
+    update() {
+
+    },
+
+    draw() {
+
+    }
+});`);
+        }
+    },
 
     updateRender(config) {
         if(window.render) {

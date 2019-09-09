@@ -1,93 +1,119 @@
 class Style {
     constructor(styles) {
-        const sheet = document.createElement('style');
-        sheet.innerHTML = styles;
-        return sheet;
+        this.sheet = document.createElement('style');
+        this.styles = styles;
+        this.build();
+        this.addToDom();
     }
+
+    build() {
+        this.sheet.innerHTML = this.styles;
+    }
+
+    addToDom() {
+        document.head.appendChild(this.sheet);
+    }
+
+    update(styles) {
+        this.styles = styles;
+        this.build();
+    }
+
+    
 }
 
 new Canv('#main', {
+    getStylesheet() {
+        return `
+        .editor-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding: 30px 0;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .editor-modal-content {
+            background-color: ${cmd.colors.secondary};
+            margin: auto;
+            padding: 0 10px;
+            border: 1px solid ${cmd.colors.secondary};
+            width: 80%;
+            position: relative;
+            color: ${cmd.colors.primary};
+        }
+
+        .editor-close {
+            color: ${cmd.colors.primary};
+            position: absolute;
+            top: 0;
+            right: 10px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .editor-close:hover,
+        .editor-close:focus {
+            color: ${new Color(cmd.colors.primary).invert()};
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        .editor-modal-title {
+            color: ${cmd.colors.primary};
+            font-family: verdana;
+            text-align: center;
+            font-size: 20px;
+            padding: 5px 15px;
+        }
+
+        .editor-modal-body {
+            text-align: justify;
+            font-size: 14px;
+            font-family: verdana;
+            padding: 25px;
+            background-color: ${new Color(cmd.colors.primary).opacity(0.05)};
+            color: black;
+            margin-bottom: 15px;
+        }
+
+        .editor-code-container {
+            height: 80vh;
+            border: 1px solid ${new Color(cmd.colors.primary).opacity(0.1)};
+        }
+
+        .editor-modal-action {
+            padding: 5px 20px;
+            font-size: 16px;
+            margin: 10px 10px -10px 10px;
+            background-color: ${cmd.colors.secondary};
+            color: ${cmd.colors.primary};
+            border: 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            cursor: pointer;
+            transition: all 0.2s ease-in;
+        }
+
+        .editor-modal-action:hover {
+            background-color: ${new Color(cmd.colors.primary).invert()};
+            color: ${new Color(cmd.colors.secondary).invert()};
+        }
+        
+    `;
+    },
     setup() {
-        document.head.appendChild(new Style(`
-            .editor-modal {
-                display: none;
-                position: fixed;
-                z-index: 1;
-                padding: 30px 0;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-                background-color: rgb(0,0,0);
-                background-color: rgba(0, 0, 0, 0.4);
-            }
-            
-            .editor-modal-content {
-                background-color: ${cmd.colors.secondary};
-                margin: auto;
-                padding: 0 20px;
-                // border: 1px solid ${cmd.colors.primary};
-                width: 80%;
-                position: relative;
-                color: ${cmd.colors.primary};
-            }
+        this.stylesheet = new Style(this.getStylesheet());
+        cmd.registerEvent("color-change", () => {
+            this.stylesheet.update(this.getStylesheet());
+        })
 
-            .editor-close {
-                color: ${cmd.colors.primary};
-                position: absolute;
-                top: 0;
-                right: 10px;
-                font-size: 28px;
-                font-weight: bold;
-            }
-            
-            .editor-close:hover,
-            .editor-close:focus {
-                color: ${new Color(cmd.colors.primary).invert()};
-                text-decoration: none;
-                cursor: pointer;
-            }
-
-
-            .editor-modal-title {
-                color: ${cmd.colors.primary};
-                font-family: ${cmd.fontFamily};
-                text-align: center;
-                font-size: 20px;
-                margin-bottom: 10px;
-                padding: 0 15px;
-            }
-
-            .editor-modal-body {
-                text-align: center;
-                font-size: 16px;
-                font-family: ${cmd.fontFamily};
-            }
-
-            .editor-code-container {
-                height: 80vh;
-                border: 1px solid ${cmd.colors.primary};
-            }
-
-            .editor-modal-action {
-                padding: 5px 20px;
-                font-size: 16px;
-                margin: 10px;
-                background-color: ${cmd.colors.primary};
-                color: ${cmd.colors.secondary};
-                border: 0;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-                cursor: pointer;
-                transition: all 0.2s ease-in;
-            }
-
-            .editor-modal-action:hover {
-                background-color: ${new Color(cmd.colors.primary).invert()};
-                color: ${new Color(cmd.colors.secondary).invert()};
-            }
-            
-        `));
 
         const editorModal = document.createElement("div");
         editorModal.id = "editorModal";
