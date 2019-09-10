@@ -580,6 +580,28 @@ class Pic extends Shape {
     }
 }
 
+class Sprite extends ShapeGroup {
+    constructor() {super(...arguments)}
+    getString(width=100, height=100) {
+        const canv = document.createElement("canvas");
+        const id = "sprite-" + Canv.random(10000, 99999);
+        canv.id = id;
+        document.body.append(canv);
+        const c = new Canv("#"+id, {
+            width,
+            height,
+            fullscreen: false,
+            createSprite(spr) {
+                this.add(spr);
+                return this.snapshot();
+            }
+        });
+        let sprite = c.createSprite(this);
+        document.body.removeChild(canv);
+        return sprite;
+    }
+}
+
 class Point extends Shape {
     constructor(x, y) {
         super(x, y);
