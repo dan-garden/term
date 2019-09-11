@@ -24,6 +24,8 @@ window.canvasRenderer = new Canv('canvas', {
 
                         }
                     }
+
+
                 });
     
                 cmd.registerCommand("render-update", () => {
@@ -81,8 +83,9 @@ window.canvasRenderer = new Canv('canvas', {
         } catch(e) {
             console.error(e);
         }
-        window.render.width = 400;
-        window.render.height = 400;
+
+        window.render.width = window.innerWidth / 3;
+        window.render.height = window.innerHeight;
         window.render.canvas.style.position = "fixed";
         window.render.canvas.style.top = 0;
         window.render.canvas.style.right = 0;

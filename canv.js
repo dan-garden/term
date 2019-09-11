@@ -530,6 +530,10 @@ class Pic extends Shape {
         this.image.src = n;
     }
 
+    get src() {
+        return this.image.src;
+    }
+
 
     getPixels(x=0, y=0, w=this.width, h=this.height) {
         const px = [];
@@ -1186,8 +1190,10 @@ class Canv {
     }
 
     resize() {
-        this.width = document.body.clientWidth;
-        this.height = document.body.clientHeight - 3;
+        if(this.fullscreen) {
+            this.width = document.body.clientWidth;
+            this.height = document.body.clientHeight - 3;
+        }
     }
 
     start() {

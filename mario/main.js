@@ -16,54 +16,11 @@ class StateSprite extends Pic {
     
 }
 
-const sprites = {
-    mario: {
-        default: `
-            _____22222______
-            ____222222222___
-            ____5551101_____
-            ___5151110111___
-            ___51551110111__
-            ___5511110000___
-            _____1111111____
-            ____223222______
-            ___2223223222___
-            __222233332222__
-            __112343343211__
-            __111333333111__
-            __113333333311__
-            ____333__333____
-            ___555____555___
-            __5555____5555__
-        `,
-        running_0: `
-            
-        `
-    },
-    block: {
-        default: `
-            7666666668766667
-            6777777778677776
-            6777777778677776
-            6777777778677776
-            6777777778687776
-            6777777778788887
-            6777777778666668
-            6777777778677778
-            6777777778677778
-            6777777778677778
-            8877777786777778
-            6688777786777778
-            6766888867777778
-            6777666867777778
-            6777777867777788
-            7888888788888887
-        `
-    },
-}
 
 
-canvasRenderer.updateRender({
+
+const game = new Canv("canvas", {
+    fullscreen: true,
     genSprite(layout) {
         let r = layout.trim().split("\n");
         let height = r.length;
@@ -83,8 +40,8 @@ canvasRenderer.updateRender({
     },
     
     setup() {
-        this.res = 1;
-        this.floorHeight = 2;
+        this.res = 2;
+        this.floorHeight = 10;
         this.init();
         // this.mario.setState("running_0");
     },
@@ -106,30 +63,67 @@ canvasRenderer.updateRender({
         
         this.initSprites();
 
+        this.loadWorld(0, 0);
         this.initMario();
-        this.initBlocks();
     },
     
     initSprites() {
+        this.sprites = {};
         Object.keys(sprites).forEach(spriteName => {
             let states = sprites[spriteName];
             let spriteStates = {};
             Object.keys(states).forEach(stateName => {
                 spriteStates[stateName] = this.genSprite(states[stateName]);
             });
-            this[spriteName] = new StateSprite(spriteStates);
+            this.sprites[spriteName] = spriteStates;
         })
     },
-    
+
+
+    loadWorld(n, s) {
+        this.world = new ShapeGroup();
+
+        const map = maps[n][s];
+        if(map) {
+            let r = map.trim().split("\n");
+            let height = r.length;
+            let width = r[0].length;
+            r = r.map(l => l.trim().split(""));
+            const tiles = r.map((row, y) => {
+                const tile_cols = row.map((sprite, x) => {
+                    sprite = sprite==="s"?"s":(sprite=="_"?false:this.sprites[sprite]);
+                    if(sprite === "s" || sprite && sprite.default) {
+
+                        let posx = x * this.size;
+                        let posy = y * this.size;
+                        let w = this.size;
+                        let h = this.size;
+
+                        if(sprite === "s") {
+                            this.startPos = new Vector(posx, posy);
+                        } else {
+                            let tile = new Pic(sprite.default, posx, posy, w, h);
+                            this.world.add(tile);
+                            return tile;
+                        }
+                        
+                    }
+                });
+                return tile_cols;
+            });
+
+            console.log(this.world);
+        }
+    },
+
+        
     initMario() {
-        this.mario.setPos(
-            this.halfWidth(this.size),
-            this.height - (this.size * (this.floorHeight+1))
-        );
+        this.mario = new StateSprite(this.sprites.mario);
+        this.mario.setPos(this.startPos.x, this.startPos.y);
     },
     
     initBlocks() {
-        this.block = this.block.src;
+        this.block = this.sprites.g.src;
         this.blocks = new ShapeGroup();
         for(let j = 0; j < this.floorHeight; j++) {
             for(let i = 0; i < (this.width) / this.size; i++) {
@@ -146,12 +140,16 @@ canvasRenderer.updateRender({
     },
     
     update() {
-        
+        if(this.keyDown("d")) {
+            this.world.moveX(-2);
+        } else if(this.keyDown("a")) {
+            this.world.moveX(2);
+        }
     },
     
     draw() {
         this.background = new Color("skyblue");
         this.add(this.mario);
-        this.add(this.blocks);
+        this.add(this.world);
     }
 });
