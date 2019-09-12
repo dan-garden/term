@@ -9,7 +9,7 @@
 </head>
 <body>
     <canvas></canvas>
-    <script src="../term/canv.js"></script>
+    <script src="http://localhost:3001/term/canv.js"></script>
     <script src="world.js"></script>
     <script src="sprites.js"></script>
     <script src="main.js"></script>

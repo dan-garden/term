@@ -178,6 +178,13 @@ class Vector {
         }
     }
 
+    subtract(v) {
+        if(v instanceof Vector) {
+            this.x -= v.x;
+            this.y -= v.y;
+        }
+    }
+
     moveX(n) {
         this.x += n;
     }
@@ -1192,7 +1199,7 @@ class Canv {
     resize() {
         if(this.fullscreen) {
             this.width = document.body.clientWidth;
-            this.height = document.body.clientHeight - 3;
+            this.height = document.body.clientHeight - 5;
         }
     }
 
