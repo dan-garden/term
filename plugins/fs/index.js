@@ -4,8 +4,8 @@ window.fs = new Canv('#main', {
 
         this.opts = Object.freeze({
             root: "./public/",
-            writeDisk: true,
-            readDisk: true
+            writeDisk: false,
+            readDisk: false
         });
 
         
