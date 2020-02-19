@@ -5,8 +5,8 @@ class Term extends Canv {
                 primary: new Color("#ffffff"),
                 secondary: new Color("#000000"),
 
-                primary: new Color(255),
-                secondary: new Color(39, 40, 34),
+                // primary: new Color(255),
+                // secondary: new Color(39, 40, 34),
 
                 grey: new Color(150),
 
