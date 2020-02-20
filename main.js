@@ -696,6 +696,7 @@ class Term extends Canv {
                         this.canvas.parentNode.style.overflowY = "scroll";
 
                         if(this.hasNewLine) {
+                            console.log("scroll me");
                             this.canvas.scrollIntoView({ behavior: 'smooth', block: 'end' });
                         }
                     } else {
