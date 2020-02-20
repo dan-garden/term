@@ -44,6 +44,7 @@ class Term extends Canv {
                 this.events = {};
                 this.oldColors = false;
                 this.pendingWrite = false;
+                this.hasNewLine = false;
                 this.history = localStorage["cli-history"] ?
                     JSON.parse(localStorage.getItem("cli-history")) : [];
 
@@ -226,6 +227,7 @@ class Term extends Canv {
                 if(ml && line) {
                     this.triggerEvent("write-output", [line.text.toString()])
                 }
+                this.hasNewLine = true;
                 return line;
             },
 
@@ -692,6 +694,10 @@ class Term extends Canv {
 
                     if(this.height > this.canvas.parentNode.clientHeight) {
                         this.canvas.parentNode.style.overflowY = "scroll";
+
+                        if(this.hasNewLine) {
+                            this.canvas.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                        }
                     } else {
                         this.canvas.parentNode.style.overflowY = "hidden";
                     }
