@@ -692,12 +692,13 @@ class Term extends Canv {
                     this.add(this.cursor);
                     this.add(this.view);
 
+                    // console.log("test");
                     if(this.height > this.canvas.parentNode.clientHeight) {
                         this.canvas.parentNode.style.overflowY = "scroll";
 
                         if(this.hasNewLine) {
-                            console.log("scroll me");
-                            this.canvas.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                            this.canvas.scrollIntoView({ block: 'end' });
+                            this.hasNewLine = false;
                         }
                     } else {
                         this.canvas.parentNode.style.overflowY = "hidden";
