@@ -5,9 +5,6 @@ class Term extends Canv {
                 primary: new Color("#ffffff"),
                 secondary: new Color("#000000"),
 
-                // primary: new Color(255),
-                // secondary: new Color(39, 40, 34),
-
                 grey: new Color(150),
 
                 magenta: new Color(223, 98, 235),
@@ -112,85 +109,95 @@ class Term extends Canv {
 
             bindKeyDown() {
                 window.addEventListener("keydown", e => {
-                    if (this.visible()) {
-                        if ((e.ctrlKey || e.metaKey) && e.key === "v") {
-                            // e.preventDefault();
+                    this.keyPress(e);
+                    this.triggerEvent("char", e);
+                });
+            },
+
+            keyPress(e) {
+                if (this.visible()) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === "v") {
+                        // e.preventDefault();
+                        return;
+                    }
+                    const lastLineIndex = this.lines.length - 1;
+                    const lastLine = this.lines[lastLineIndex].text;
+                    if (e.key === "ArrowLeft") {
+                        if (this.cursorPos === false) {
+                            this.cursorPos = lastLine.length - 1;
+                        } else {
+                            if (this.cursorPos > this.prefix.length) {
+                                this.cursorPos--;
+                            }
+                        }
+                        return;
+                    }
+                    if (e.key === "ArrowRight") {
+                        if (this.cursorPos === false) {
                             return;
                         }
-                        const lastLineIndex = this.lines.length - 1;
-                        const lastLine = this.lines[lastLineIndex].text;
-                        if (e.key === "ArrowLeft") {
+                        if (this.cursorPos < lastLine.length - 1) {
+                            this.cursorPos++;
+                        } else if (this.cursorPos === lastLine.length - 1) {
+                            this.cursorPos = false;
+                        }
+                        return;
+                    }
+
+                    if (e.key === "ArrowUp") {
+                        this.historyChange(-1);
+                    } else if (e.key === "ArrowDown") {
+                        this.historyChange(1);
+                    } else if (e.key === "Enter") {
+                        if(e.preventDefault) {
+                            e.preventDefault();
+                        }                        
+                        const command = lastLine.replace(this.prefix, "");
+                        this.run(command);
+                    } else if (e.key === "Backspace" || e.key === "Delete") {
+                        if(e.preventDefault) {
+                            e.preventDefault();
+                        }
+                        if (lastLine !== this.prefix) {
                             if (this.cursorPos === false) {
-                                this.cursorPos = lastLine.length - 1;
-                            } else {
-                                if (this.cursorPos > this.prefix.length) {
+                                this.lines[lastLineIndex].text = lastLine.substring(0, lastLine.length - 1);
+                            } else if (this.cursorPos > this.prefix.length) {
+                                this.lines[lastLineIndex].text = lastLine.slice(0, this.cursorPos - 1) + lastLine.slice(this.cursorPos);
+                                if (this.cursorPos === lastLine.length) {
+                                    this.cursorPos = false;
+                                } else {
                                     this.cursorPos--;
                                 }
                             }
-                            return;
                         }
-                        if (e.key === "ArrowRight") {
+                    } else if(e.key === "Tab") {
+                        if(e.preventDefault) {
+                            e.preventDefault();
+                        }                        if(this.lines[this.lines.length-1].ghost) {
+                            this.lines[this.lines.length-1].text = this.lines[this.lines.length-1].ghost;
+                        }
+                    } else if (e.key.length === 1) {
+                        let maxWidth = (this.width / this.charWidth) - 1;
+                        if (this.lines[lastLineIndex].text.length >= maxWidth) {
+                            // this.lines.push(new this.line(
+                            //     "",
+                            //     this.colors.primary,
+                            //     this.colors.secondary
+                            // ));
+                            // this.lines[lastLineIndex + 1].text += e.key;
+                        } else {
                             if (this.cursorPos === false) {
-                                return;
-                            }
-                            if (this.cursorPos < lastLine.length - 1) {
-                                this.cursorPos++;
-                            } else if (this.cursorPos === lastLine.length - 1) {
-                                this.cursorPos = false;
-                            }
-                            return;
-                        }
-
-                        if (e.key === "ArrowUp") {
-                            this.historyChange(-1);
-                        } else if (e.key === "ArrowDown") {
-                            this.historyChange(1);
-                        } else if (e.key === "Enter") {
-                            e.preventDefault();
-                            const command = lastLine.replace(this.prefix, "");
-                            this.run(command);
-                        } else if (e.key === "Backspace" || e.key === "Delete") {
-                            e.preventDefault();
-                            if (lastLine !== this.prefix) {
-                                if (this.cursorPos === false) {
-                                    this.lines[lastLineIndex].text = lastLine.substring(0, lastLine.length - 1);
-                                } else if (this.cursorPos > this.prefix.length) {
-                                    this.lines[lastLineIndex].text = lastLine.slice(0, this.cursorPos - 1) + lastLine.slice(this.cursorPos);
-                                    if (this.cursorPos === lastLine.length) {
-                                        this.cursorPos = false;
-                                    } else {
-                                        this.cursorPos--;
-                                    }
-                                }
-                            }
-                        } else if(e.key === "Tab") {
-                            e.preventDefault();
-                            if(this.lines[this.lines.length-1].ghost) {
-                                this.lines[this.lines.length-1].text = this.lines[this.lines.length-1].ghost;
-                            }
-                        } else if (e.key.length === 1) {
-                            let maxWidth = (this.width / this.charWidth) - 1;
-                            if (this.lines[lastLineIndex].text.length >= maxWidth) {
-                                // this.lines.push(new this.line(
-                                //     "",
-                                //     this.colors.primary,
-                                //     this.colors.secondary
-                                // ));
-                                // this.lines[lastLineIndex + 1].text += e.key;
+                                this.lines[lastLineIndex].text += e.key;
                             } else {
-                                if (this.cursorPos === false) {
-                                    this.lines[lastLineIndex].text += e.key;
-                                } else {
-                                    const newLine = lastLine.substring(0, this.cursorPos) + e.key + lastLine.substring(this.cursorPos, lastLine.length);
-                                    this.lines[lastLineIndex].text = newLine;
-                                    this.cursorPos++;
-                                }
+                                const newLine = lastLine.substring(0, this.cursorPos) + e.key + lastLine.substring(this.cursorPos, lastLine.length);
+                                this.lines[lastLineIndex].text = newLine;
+                                this.cursorPos++;
                             }
                         }
-
-                        this.setGhostText(this.getGhostText());
                     }
-                });
+
+                    this.setGhostText(this.getGhostText());
+                }
             },
 
 
@@ -251,7 +258,7 @@ class Term extends Canv {
                 }
                 if (Array.isArray(this.events[type])) {
                     this.events[type].forEach(handler => {
-                        handler(...args);
+                        setTimeout(() => handler(...args));
                     })
                 }
             },

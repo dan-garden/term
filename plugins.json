@@ -1,8 +1,10 @@
 {
+    "canvas": {},
     "welcome-message": {},
     "shortcodes": {},
     "termux": {},
     "get": {},
+    "actions": {},
     "url-exec": {},
     "popups": {},
     "git": {},

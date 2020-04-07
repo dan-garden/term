@@ -20,10 +20,17 @@ new Canv('#main', {
 
         cmd.registerCommand("reg", args => {
             const type = args.shift();
-            if(!type || (type!=="function" && type!=="fn" && type!=="command" && type!=="cmd")) {
-                throw new Error("Type must be function or command");
+            if(!type || (type!=="function" && type!=="fn" && type!=="command" && type!=="cmd" && type!=="event")) {
+                throw new Error("Type must be function, command or event");
             } else {
-                if(type === "function" || type === "fn") {
+                if(type === "event") {
+                    const identifier = args.shift();
+                    if(identifier) {
+                        cmd.registerEvent(identifier, new Function(args.join(" ")))
+                    } else {
+                        throw new Error("Event must have an identifier");
+                    }
+                } else if(type === "function" || type === "fn") {
                     cmd.registerFunction(new Function(args.join(" ")));
                 } else if(type === "command" || type === "cmd") {
                     const identifier = args.shift();
